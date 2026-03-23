@@ -1,0 +1,11 @@
+{
+  "framework": "nextjs",
+  "buildCommand": "npm run build",
+  "devCommand": "npm run dev",
+  "installCommand": "npm install",
+  "outputDirectory": ".next",
+  "env": {
+    "NEXT_PUBLIC_API_URL": "@servimatch_api_url",
+    "NEXT_PUBLIC_MAPBOX_TOKEN": "@servimatch_mapbox_token"
+  }
+}
