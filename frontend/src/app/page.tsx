@@ -48,10 +48,9 @@ export default function HomePage() {
   };
 
   return (
-    <div className="bg-[#0f172a] text-white">
-
+    <div className="bg-[#0f172a] text-white -mt-16">
       {/* ───────────────── HERO ───────────────── */}
-      <section className="min-h-screen bg-[#0f172a] relative overflow-hidden flex items-center">
+      <section className="min-h-screen bg-[#0f172a] relative overflow-hidden flex items-center pt-16">
         {/* grid pattern */}
         <div
           className="absolute inset-0 opacity-[0.02]"

@@ -1,18 +1,21 @@
+'use client';
+
 import Link from 'next/link';
-import { Wrench } from 'lucide-react';
+import { usePathname } from 'next/navigation';
 
 export function Footer() {
+  const pathname = usePathname();
+  
+  if (pathname?.startsWith('/auth')) return null;
+
   return (
     <footer className="py-12 bg-[#0f172a] text-white">
       <div className="max-w-6xl mx-auto px-4 grid md:grid-cols-3 gap-10">
 
         <div>
-          <div className="flex items-center gap-2 mb-3">
-            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-              <Wrench size={16} color="white" />
-            </div>
-            <span className="font-bold text-lg">ServiMatch</span>
-          </div>
+          <Link href="/" className="flex items-center gap-1 font-bold text-xl tracking-tight hover:opacity-80 transition-opacity mb-3 inline-flex">
+            <span className="text-white">Servi</span><span className="text-blue-500">Match</span>
+          </Link>
           <p className="text-white/50 text-sm leading-relaxed">
             Conectando clientes con profesionales en tiempo real.
           </p>

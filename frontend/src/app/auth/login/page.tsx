@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Wrench, ArrowLeft } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { toast } from 'sonner';
 import { authApi } from '@/lib/api/auth';
 import { useAuthStore } from '@/lib/store/auth.store';
@@ -36,64 +36,60 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0f172a] flex items-center justify-center px-4 py-12">
-      {/* Background pattern */}
-      <div
-        className="absolute inset-0 opacity-[0.02]"
-        style={{
-          backgroundImage: 'radial-gradient(circle at 1px 1px, white 1px, transparent 0)',
-          backgroundSize: '32px 32px'
-        }}
-      />
-      
-      {/* Glow */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-blue-600 opacity-[0.05] blur-[150px] rounded-full" />
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#111827] overflow-hidden">
+      {/* Full Page Gradient Background */}
+      <div className="absolute inset-0 w-full h-full bg-gradient-to-br from-[#111827] via-blue-900 to-blue-700" />
 
-      <div className="relative w-full max-w-md">
-        {/* Back to home */}
-        <Link href="/" className="inline-flex items-center gap-2 text-white/50 hover:text-white transition-colors mb-8">
-          <ArrowLeft size={16} />
-          <span className="text-sm">Volver al inicio</span>
-        </Link>
+      {/* Back Button (Glassmorphism) */}
+      <Link 
+        href="/" 
+        className="absolute top-4 left-4 sm:top-6 sm:left-6 z-50 flex items-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl backdrop-blur-md text-white/90 hover:text-white transition-all shadow-lg hover:shadow-white/5 hover:-translate-y-0.5 active:scale-95"
+      >
+        <ArrowLeft size={18} />
+        <span className="text-sm font-semibold tracking-wide hidden sm:block">Volver al inicio</span>
+      </Link>
 
-        {/* Card */}
-        <div className="bg-white rounded-3xl p-8 shadow-2xl">
-          {/* Logo */}
-          <div className="text-center mb-8">
-            <div className="w-14 h-14 bg-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
-              <Wrench size={24} color="white" />
-            </div>
-            <h1 className="text-2xl font-bold text-[#0f172a]">Bienvenido de nuevo</h1>
-            <p className="text-gray-500 mt-1 text-sm">Ingresa a tu cuenta de ServiMatch</p>
+      {/* Form Container */}
+      <div className="relative w-full max-w-[440px] px-6 z-10 mt-12 sm:mt-0">
+        <div className="bg-white/10 backdrop-blur-2xl p-8 sm:p-10 rounded-3xl shadow-[0_8px_40px_rgba(0,0,0,0.2)] border border-white/20">
+          <div className="mb-8 text-center">
+            <Link href="/" className="inline-flex items-center gap-1 font-bold text-2xl tracking-tight mb-6">
+              <span className="text-white">Servi</span><span className="text-blue-300">Match</span>
+            </Link>
+            <h1 className="text-2xl font-bold text-white tracking-tight drop-shadow-sm">Bienvenido de nuevo</h1>
+            <p className="text-white/80 mt-2 text-sm">Ingresa a tu cuenta para continuar</p>
           </div>
 
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Correo electrónico</label>
+              <label className="block text-sm font-semibold text-white/90 mb-1.5 drop-shadow-sm">Correo electrónico</label>
               <input 
                 {...register('email')} 
                 type="email" 
                 placeholder="tu@email.com" 
-                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-white/50 focus:bg-white/10 transition-all shadow-sm backdrop-blur-sm"
               />
-              {errors.email && <p className="text-red-500 text-xs mt-1.5">{errors.email.message}</p>}
+              {errors.email && <p className="text-red-300 text-xs mt-1.5 font-medium bg-red-900/40 w-fit px-2 py-0.5 rounded-md backdrop-blur-md">{errors.email.message}</p>}
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Contraseña</label>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="block text-sm font-semibold text-white/90 drop-shadow-sm">Contraseña</label>
+                <Link href="#" className="text-xs text-blue-200 font-medium hover:text-white transition-colors drop-shadow-sm">¿La olvidaste?</Link>
+              </div>
               <input 
                 {...register('password')} 
                 type="password" 
                 placeholder="••••••••" 
-                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-white/50 focus:bg-white/10 transition-all shadow-sm backdrop-blur-sm"
               />
-              {errors.password && <p className="text-red-500 text-xs mt-1.5">{errors.password.message}</p>}
+              {errors.password && <p className="text-red-300 text-xs mt-1.5 font-medium bg-red-900/40 w-fit px-2 py-0.5 rounded-md backdrop-blur-md">{errors.password.message}</p>}
             </div>
             
             <button 
               type="submit" 
               disabled={isSubmitting} 
-              className="w-full bg-orange-500 hover:bg-orange-600 disabled:bg-orange-300 text-white font-semibold py-3.5 rounded-xl transition-colors flex items-center justify-center gap-2"
+              className="w-full bg-white hover:bg-white/90 disabled:bg-white/50 text-blue-900 font-bold py-3.5 rounded-xl transition-all shadow-lg shadow-white/10 mt-6 flex items-center justify-center gap-2"
             >
               {isSubmitting ? (
                 <><Spinner size={18} /> Ingresando...</>
@@ -103,9 +99,9 @@ export default function LoginPage() {
             </button>
           </form>
 
-          <p className="text-center text-sm text-gray-500 mt-6">
+          <p className="text-center text-sm text-white/70 mt-8">
             ¿No tienes cuenta?{' '}
-            <Link href="/auth/register" className="text-blue-600 font-semibold hover:underline">Regístrate</Link>
+            <Link href="/auth/register" className="text-white font-bold hover:text-blue-300 transition-colors drop-shadow-sm">Regístrate gratis</Link>
           </p>
         </div>
       </div>
