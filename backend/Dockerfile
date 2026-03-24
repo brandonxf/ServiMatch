@@ -28,7 +28,6 @@ RUN DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy" npx prisma gene
 
 COPY --from=builder /app/dist ./dist
 
-EXPOSE 3001
 
 # En runtime SÍ usa la DATABASE_URL real de las variables de Railway
 CMD ["sh", "-c", "npx prisma migrate deploy && node dist/main"]
