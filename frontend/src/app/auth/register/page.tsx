@@ -4,7 +4,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Wrench, User, HardHat } from 'lucide-react';
+import { Wrench, User, HardHat, ArrowLeft } from 'lucide-react';
 import { toast } from 'sonner';
 import { authApi } from '@/lib/api/auth';
 import { useAuthStore } from '@/lib/store/auth.store';
@@ -45,68 +45,124 @@ function RegisterForm() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4 py-10">
-      <div className="w-full max-w-sm">
-        <div className="text-center mb-8">
-          <div className="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <Wrench size={22} color="white" />
+    <div className="min-h-screen bg-[#0f172a] flex items-center justify-center px-4 py-12">
+      {/* Background pattern */}
+      <div
+        className="absolute inset-0 opacity-[0.02]"
+        style={{
+          backgroundImage: 'radial-gradient(circle at 1px 1px, white 1px, transparent 0)',
+          backgroundSize: '32px 32px'
+        }}
+      />
+      
+      {/* Glow */}
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-blue-600 opacity-[0.05] blur-[150px] rounded-full" />
+
+      <div className="relative w-full max-w-md">
+        {/* Back to home */}
+        <Link href="/" className="inline-flex items-center gap-2 text-white/50 hover:text-white transition-colors mb-8">
+          <ArrowLeft size={16} />
+          <span className="text-sm">Volver al inicio</span>
+        </Link>
+
+        {/* Card */}
+        <div className="bg-white rounded-3xl p-8 shadow-2xl">
+          {/* Logo */}
+          <div className="text-center mb-8">
+            <div className="w-14 h-14 bg-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+              <Wrench size={24} color="white" />
+            </div>
+            <h1 className="text-2xl font-bold text-[#0f172a]">Crear cuenta</h1>
+            <p className="text-gray-500 mt-1 text-sm">Únete a ServiMatch hoy</p>
           </div>
-          <h1 className="text-2xl font-extrabold text-gray-900">Crear cuenta</h1>
-          <p className="text-gray-500 mt-1 text-sm">Únete a ServiMatch hoy</p>
-        </div>
 
-        {/* Role selector */}
-        <div className="grid grid-cols-2 gap-3 mb-6">
-          {[
-            { role: 'CLIENT' as const, label: 'Soy cliente', icon: <User size={18} />, desc: 'Busco servicios' },
-            { role: 'WORKER' as const, label: 'Soy trabajador', icon: <HardHat size={18} />, desc: 'Ofrezco servicios' },
-          ].map(opt => (
-            <button key={opt.role} type="button"
-              onClick={() => { setSelectedRole(opt.role); setValue('role', opt.role); }}
-              className={`p-3 rounded-xl border-2 text-left transition-all ${
-                selectedRole === opt.role
-                  ? 'border-blue-600 bg-blue-50 text-blue-700'
-                  : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
-              }`}>
-              <div className="flex items-center gap-2 font-semibold text-sm mb-0.5">
-                {opt.icon} {opt.label}
-              </div>
-              <p className="text-xs opacity-70">{opt.desc}</p>
-            </button>
-          ))}
-        </div>
+          {/* Role selector */}
+          <div className="grid grid-cols-2 gap-3 mb-6">
+            {[
+              { role: 'CLIENT' as const, label: 'Soy cliente', icon: <User size={18} />, desc: 'Busco servicios' },
+              { role: 'WORKER' as const, label: 'Soy trabajador', icon: <HardHat size={18} />, desc: 'Ofrezco servicios' },
+            ].map(opt => (
+              <button 
+                key={opt.role} 
+                type="button"
+                onClick={() => { setSelectedRole(opt.role); setValue('role', opt.role); }}
+                className={`p-4 rounded-xl border-2 text-left transition-all ${
+                  selectedRole === opt.role
+                    ? 'border-orange-500 bg-orange-50 text-orange-700'
+                    : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
+                }`}
+              >
+                <div className="flex items-center gap-2 font-semibold text-sm mb-1">
+                  {opt.icon} {opt.label}
+                </div>
+                <p className="text-xs opacity-70">{opt.desc}</p>
+              </button>
+            ))}
+          </div>
 
-        <div className="card p-6">
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             <div>
-              <label className="label">Nombre completo</label>
-              <input {...register('fullName')} placeholder="Juan Pérez" className="input" />
-              {errors.fullName && <p className="text-red-500 text-xs mt-1">{errors.fullName.message}</p>}
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">Nombre completo</label>
+              <input 
+                {...register('fullName')} 
+                placeholder="Juan Pérez" 
+                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+              />
+              {errors.fullName && <p className="text-red-500 text-xs mt-1.5">{errors.fullName.message}</p>}
             </div>
+            
             <div>
-              <label className="label">Correo electrónico</label>
-              <input {...register('email')} type="email" placeholder="tu@email.com" className="input" />
-              {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>}
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">Correo electrónico</label>
+              <input 
+                {...register('email')} 
+                type="email" 
+                placeholder="tu@email.com" 
+                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+              />
+              {errors.email && <p className="text-red-500 text-xs mt-1.5">{errors.email.message}</p>}
             </div>
+            
             <div>
-              <label className="label">Teléfono <span className="text-gray-400 font-normal">(opcional)</span></label>
-              <input {...register('phone')} type="tel" placeholder="+573001234567" className="input" />
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                Teléfono <span className="text-gray-400 font-normal">(opcional)</span>
+              </label>
+              <input 
+                {...register('phone')} 
+                type="tel" 
+                placeholder="+573001234567" 
+                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+              />
             </div>
+            
             <div>
-              <label className="label">Contraseña</label>
-              <input {...register('password')} type="password" placeholder="Mínimo 8 caracteres" className="input" />
-              {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>}
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">Contraseña</label>
+              <input 
+                {...register('password')} 
+                type="password" 
+                placeholder="Mínimo 8 caracteres" 
+                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+              />
+              {errors.password && <p className="text-red-500 text-xs mt-1.5">{errors.password.message}</p>}
             </div>
-            <button type="submit" disabled={isSubmitting} className="btn-primary w-full">
-              {isSubmitting ? <><Spinner size={16} /> Creando cuenta...</> : 'Crear cuenta'}
+            
+            <button 
+              type="submit" 
+              disabled={isSubmitting} 
+              className="w-full bg-orange-500 hover:bg-orange-600 disabled:bg-orange-300 text-white font-semibold py-3.5 rounded-xl transition-colors flex items-center justify-center gap-2"
+            >
+              {isSubmitting ? (
+                <><Spinner size={18} /> Creando cuenta...</>
+              ) : (
+                'Crear cuenta'
+              )}
             </button>
           </form>
-        </div>
 
-        <p className="text-center text-sm text-gray-500 mt-4">
-          ¿Ya tienes cuenta?{' '}
-          <Link href="/auth/login" className="text-blue-600 font-semibold hover:underline">Ingresar</Link>
-        </p>
+          <p className="text-center text-sm text-gray-500 mt-6">
+            ¿Ya tienes cuenta?{' '}
+            <Link href="/auth/login" className="text-blue-600 font-semibold hover:underline">Ingresar</Link>
+          </p>
+        </div>
       </div>
     </div>
   );
