@@ -1,5 +1,5 @@
 import { NestFactory } from '@nestjs/core';
-import { ValidationPipe } from '@nestjs/common';
+import { ValidationPipe, Logger } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
 import helmet from 'helmet';
@@ -8,13 +8,8 @@ import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 
 async function bootstrap() {
-  console.log('[DEBUG] Iniciando bootstrap...');
-  console.log('[DEBUG] Ejecutando NestFactory.create...');
-  const app = await NestFactory.create(AppModule, {
-    logger: ['error', 'warn', 'log', 'debug', 'verbose'],
-    abortOnError: false // ensures it prints error if it crashes
-  });
-  console.log('[DEBUG] NestFactory finalizado con éxito.');
+  const logger = new Logger('Bootstrap');
+  const app = await NestFactory.create(AppModule);
   const config = app.get(ConfigService);
 
   app.use(helmet());
@@ -23,7 +18,7 @@ async function bootstrap() {
 
   const frontendUrl = config.get('FRONTEND_URL', 'http://localhost:3000');
   app.enableCors({
-    origin: [frontendUrl, 'http://localhost:3000', 'https://servi-match.vercel.app'],
+    origin: [frontendUrl, 'http://localhost:3000'],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   });
@@ -49,10 +44,12 @@ async function bootstrap() {
     SwaggerModule.setup('docs', app, document);
   }
 
-  const port = config.get('PORT', 3001);
+  const port = config.get<number>('PORT', 3001);
   await app.listen(port, '0.0.0.0');
-  console.log(`🚀 ServiMatch API en: http://0.0.0.0:${port}/v1`);
-  console.log(`📚 Docs en: http://0.0.0.0:${port}/docs`);
+  logger.log(`🚀 ServiMatch API corriendo en http://0.0.0.0:${port}/v1`);
+  if (config.get('NODE_ENV') !== 'production') {
+    logger.log(`📚 Swagger docs en http://localhost:${port}/docs`);
+  }
 }
 
 bootstrap();

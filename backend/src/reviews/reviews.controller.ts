@@ -1,14 +1,21 @@
-import { Controller, Get, Post, Patch, Body, Param, Query, UseGuards, ParseIntPipe, DefaultValuePipe } from '@nestjs/common';
+import {
+  Controller, Get, Post, Patch, Body, Param, Query,
+  UseGuards, ParseIntPipe, DefaultValuePipe,
+} from '@nestjs/common';
 import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { ReviewsService } from './reviews.service';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
+import { PrismaService } from '../prisma/prisma.service';
 
 @ApiTags('Reviews')
 @Controller('reviews')
 export class ReviewsController {
-  constructor(private reviews: ReviewsService) {}
+  constructor(
+    private reviews: ReviewsService,
+    private prisma: PrismaService,
+  ) {}
 
   @Post()
   @UseGuards(JwtAuthGuard) @ApiBearerAuth()
@@ -18,7 +25,7 @@ export class ReviewsController {
   }
 
   @Get('worker/:workerId')
-  @ApiOperation({ summary: 'Reseñas de un trabajador' })
+  @ApiOperation({ summary: 'Reseñas de un trabajador (por workerProfile.id)' })
   findByWorker(
     @Param('workerId') workerId: string,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
@@ -35,7 +42,13 @@ export class ReviewsController {
     @CurrentUser() user: any,
     @Body() body: { reply: string },
   ) {
-    const profile = await user.workerProfile;
-    return this.reviews.replyToReview(user.id, id, body.reply);
+    // Buscar el workerProfile.id a partir del userId
+    const profile = await this.prisma.workerProfile.findUnique({
+      where: { userId: user.id },
+    });
+    if (!profile) {
+      throw new Error('No tienes perfil de trabajador');
+    }
+    return this.reviews.replyToReview(profile.id, id, body.reply);
   }
 }
