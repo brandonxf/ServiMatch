@@ -44,9 +44,9 @@ async function bootstrap() {
   }
 
   const port = config.get('PORT', 3001);
-  await app.listen(port);
-  console.log(`🚀 ServiMatch API en: http://localhost:${port}/v1`);
-  console.log(`📚 Docs en: http://localhost:${port}/docs`);
+  await app.listen(port, '0.0.0.0');
+  console.log(`🚀 ServiMatch API en: http://0.0.0.0:${port}/v1`);
+  console.log(`📚 Docs en: http://0.0.0.0:${port}/docs`);
 }
 
 bootstrap();
