@@ -15,8 +15,9 @@ async function bootstrap() {
   app.use(cookieParser());
   app.setGlobalPrefix('v1');
 
+  const frontendUrl = config.get('FRONTEND_URL', 'http://localhost:3000');
   app.enableCors({
-    origin: config.get('FRONTEND_URL', 'http://localhost:3000'),
+    origin: [frontendUrl, 'http://localhost:3000', 'https://servi-match.vercel.app'],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   });
