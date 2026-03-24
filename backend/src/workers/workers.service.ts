@@ -90,8 +90,9 @@ export class WorkersService {
     });
     if (existing) throw new ConflictException('Ya ofreces este servicio');
 
+    const { categoryId, ...rest } = dto;
     return (this.prisma as any).workerService.create({
-      data: { workerId: profile.id, categoryId: dto.categoryId, ...dto },
+      data: { workerId: profile.id, categoryId, ...rest },
       include: { category: true },
     });
   }
