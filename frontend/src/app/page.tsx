@@ -48,20 +48,22 @@ export default function HomePage() {
   };
 
   return (
-    <div className="bg-[#0f172a] text-white -mt-16">
+    <div className="bg-[#111827] text-white -mt-16">
       {/* ───────────────── HERO ───────────────── */}
-      <section className="min-h-screen bg-[#0f172a] relative overflow-hidden flex items-center pt-16">
+      <section className="min-h-screen bg-[#111827] relative overflow-hidden flex items-center pt-16">
         {/* grid pattern */}
         <div
-          className="absolute inset-0 opacity-[0.02]"
+          className="absolute inset-0 opacity-[0.03]"
           style={{
             backgroundImage: 'radial-gradient(circle at 1px 1px, white 1px, transparent 0)',
             backgroundSize: '32px 32px'
           }}
         />
 
-        {/* blue glow */}
-        <div className="absolute top-0 left-1/3 w-[500px] h-[500px] bg-blue-600 opacity-[0.08] blur-[120px] rounded-full" />
+        {/* Radiant Nebula Auras */}
+        <div className="absolute top-[-10%] left-[-10%] w-[600px] h-[600px] bg-[#4db8ff] opacity-40 blur-[120px] rounded-full pointer-events-none mix-blend-screen" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[800px] h-[800px] bg-blue-600 opacity-30 blur-[140px] rounded-full pointer-events-none mix-blend-screen" />
+        <div className="absolute top-[20%] left-[40%] w-[500px] h-[500px] bg-indigo-500 opacity-20 blur-[140px] rounded-full pointer-events-none mix-blend-screen" />
 
         <div className="relative max-w-6xl mx-auto px-4 w-full grid md:grid-cols-[55%_45%] gap-10 items-center">
 

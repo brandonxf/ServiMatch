@@ -4,11 +4,12 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Eye, EyeOff } from 'lucide-react';
 import { toast } from 'sonner';
 import { authApi } from '@/lib/api/auth';
 import { useAuthStore } from '@/lib/store/auth.store';
 import { Spinner } from '@/components/ui/Spinner';
+import { useState } from 'react';
 
 const schema = z.object({
   email: z.string().email('Correo inválido'),
@@ -20,6 +21,7 @@ type Form = z.infer<typeof schema>;
 export default function LoginPage() {
   const router = useRouter();
   const { setAuth } = useAuthStore();
+  const [showPassword, setShowPassword] = useState(false);
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<Form>({
     resolver: zodResolver(schema),
   });
@@ -77,12 +79,21 @@ export default function LoginPage() {
                 <label className="block text-sm font-semibold text-white/90 drop-shadow-sm">Contraseña</label>
                 <Link href="#" className="text-xs text-blue-200 font-medium hover:text-white transition-colors drop-shadow-sm">¿La olvidaste?</Link>
               </div>
-              <input 
-                {...register('password')} 
-                type="password" 
-                placeholder="••••••••" 
-                className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-white/50 focus:bg-white/10 transition-all shadow-sm backdrop-blur-sm"
-              />
+              <div className="relative">
+                <input 
+                  {...register('password')} 
+                  type={showPassword ? 'text' : 'password'} 
+                  placeholder="••••••••" 
+                  className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-white/50 focus:bg-white/10 transition-all shadow-sm backdrop-blur-sm pr-12"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-white/50 hover:text-white transition-colors p-1"
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
               {errors.password && <p className="text-red-300 text-xs mt-1.5 font-medium bg-red-900/40 w-fit px-2 py-0.5 rounded-md backdrop-blur-md">{errors.password.message}</p>}
             </div>
             
