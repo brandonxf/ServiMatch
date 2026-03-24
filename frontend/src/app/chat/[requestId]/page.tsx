@@ -23,7 +23,7 @@ export default function ChatPage() {
   const [sending, setSending] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const socketRef = useRef<Socket | null>(null);
-  const bottomRef = useRef<HTMLDivElement | null>(null);
+  const messagesContainerRef = useRef<HTMLDivElement | null>(null);
   const typingRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   useEffect(() => {
@@ -63,7 +63,10 @@ export default function ChatPage() {
   }, [requestId]);
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (messagesContainerRef.current) {
+      const container = messagesContainerRef.current;
+      container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
+    }
   }, [messages, isTyping]);
 
   const sendMessage = async () => {
@@ -107,7 +110,10 @@ export default function ChatPage() {
       </div>
 
       {/* Mensajes */}
-      <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3 bg-gray-50">
+      <div 
+        ref={messagesContainerRef}
+        className="flex-1 overflow-y-auto px-4 py-4 space-y-3 bg-gray-50"
+      >
         {messages.length === 0 && !loading && (
           <div className="text-center py-10 text-gray-400 text-sm">
             <p>No hay mensajes aún.</p>
@@ -144,7 +150,6 @@ export default function ChatPage() {
             </div>
           </div>
         )}
-        <div ref={bottomRef} />
       </div>
 
       {/* Input */}
