@@ -10,6 +10,13 @@ import { toast } from 'sonner';
 
 const STEPS = ['Sobre ti', 'Servicios', 'Zona y precio', 'Confirmar'];
 
+const COLOMBIA_CITIES = [
+  'Bogotá', 'Medellín', 'Cali', 'Barranquilla', 'Cartagena',
+  'Cúcuta', 'Bucaramanga', 'Pereira', 'Santa Marta', 'Ibagué',
+  'Pasto', 'Manizales', 'Neiva', 'Villavicencio', 'Armenia',
+  'Valledupar', 'Montería', 'Sincelejo', 'Popayán', 'Tunja'
+].sort();
+
 export default function WorkerSetupPage() {
   const { user, fetchMe } = useAuthStore();
   const router = useRouter();
@@ -32,11 +39,6 @@ export default function WorkerSetupPage() {
     const token = typeof window !== 'undefined' ? localStorage.getItem('access_token') : null;
     if (!token) { router.push('/auth/login'); return; }
     workersApi.getCategories().then(({ data }) => setCategories(data as any)).catch(() => {});
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(({ coords }) => {
-        setForm(f => ({ ...f, latitude: String(coords.latitude), longitude: String(coords.longitude) }));
-      }, () => {});
-    }
   }, []);
 
   const toggleCategory = (id: string) => {
@@ -163,13 +165,9 @@ export default function WorkerSetupPage() {
             </div>
             <div>
               <label className="label">Ciudad *</label>
-              <input value={form.city} onChange={e => setForm(f => ({ ...f, city: e.target.value }))}
-                placeholder="Ej: Bogotá" className="input" />
-            </div>
-            <div>
-              <label className="label">Radio de cobertura</label>
-              <select value={form.coverageRadiusKm} onChange={e => setForm(f => ({ ...f, coverageRadiusKm: e.target.value }))} className="input">
-                {[5, 10, 15, 20, 30, 50].map(r => <option key={r} value={r}>{r} km desde tu ubicación</option>)}
+              <select value={form.city} onChange={e => setForm(f => ({ ...f, city: e.target.value }))} className="input">
+                <option value="">Selecciona tu ciudad principal</option>
+                {COLOMBIA_CITIES.map(c => <option key={c} value={c}>{c}</option>)}
               </select>
             </div>
             <div className="grid grid-cols-2 gap-3">
@@ -187,11 +185,6 @@ export default function WorkerSetupPage() {
                 </select>
               </div>
             </div>
-            {form.latitude && (
-              <p className="text-xs text-green-600 flex items-center gap-1">
-                <MapPin size={12} /> Ubicación GPS detectada automáticamente
-              </p>
-            )}
           </div>
         )}
 
@@ -206,8 +199,7 @@ export default function WorkerSetupPage() {
               {[
                 { label: 'Descripción', value: form.bio.slice(0, 80) + (form.bio.length > 80 ? '...' : '') },
                 { label: 'Servicios', value: categories.filter(c => form.selectedCategories.includes(c.id)).map(c => c.name).join(', ') },
-                { label: 'Ciudad', value: form.city },
-                { label: 'Cobertura', value: `${form.coverageRadiusKm} km` },
+                { label: 'Ciudad', value: form.city || 'No definida' },
                 { label: 'Precio base', value: form.basePrice ? `$${Number(form.basePrice).toLocaleString('es-CO')} / ${form.priceUnit === 'HOUR' ? 'hora' : form.priceUnit === 'DAY' ? 'día' : 'servicio'}` : 'No definido' },
               ].map(item => (
                 <div key={item.label} className="flex justify-between gap-4 py-2 border-b border-gray-100 last:border-0">

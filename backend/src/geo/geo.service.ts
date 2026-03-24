@@ -7,7 +7,7 @@ export class GeoService {
   constructor(private prisma: PrismaService) {}
 
   async searchWorkers(dto: SearchWorkersDto) {
-    const { lat, lng, radius = 10, category, minRating, maxPrice, available = true, page = 1, limit = 20 } = dto;
+    const { city, category, minRating, maxPrice, available = true, page = 1, limit = 20 } = dto;
     const skip = (page - 1) * limit;
 
     const workers: any[] = await this.prisma.$queryRaw`
@@ -17,13 +17,6 @@ export class GeoService {
         wp.years_experience, wp.latitude, wp.longitude,
         u.id as user_id, u.full_name, u.avatar_url, u.phone,
         (
-          6371 * acos(GREATEST(-1, LEAST(1,
-            cos(radians(${lat})) * cos(radians(wp.latitude)) *
-            cos(radians(wp.longitude) - radians(${lng})) +
-            sin(radians(${lat})) * sin(radians(wp.latitude))
-          )))
-        ) AS distance_km,
-        (
           SELECT json_agg(json_build_object('id', sc.id, 'name', sc.name, 'slug', sc.slug))
           FROM worker_services ws2
           JOIN service_categories sc ON sc.id = ws2.category_id
@@ -32,36 +25,28 @@ export class GeoService {
       FROM worker_profiles wp
       JOIN users u ON u.id = wp.user_id
       WHERE
-        wp.status = 'ACTIVE' AND wp.latitude IS NOT NULL AND wp.longitude IS NOT NULL
-        AND u.is_active = true
+        wp.status = 'ACTIVE' AND u.is_active = true
         AND (${available}::boolean = false OR wp.is_available = true)
         AND (${minRating ?? 0}::float = 0 OR wp.average_rating >= ${minRating ?? 0}::float)
         AND (${maxPrice ?? 0}::float = 0 OR wp.base_price <= ${maxPrice ?? 0}::float)
-        AND (6371 * acos(GREATEST(-1, LEAST(1,
-            cos(radians(${lat})) * cos(radians(wp.latitude)) *
-            cos(radians(wp.longitude) - radians(${lng})) +
-            sin(radians(${lat})) * sin(radians(wp.latitude))
-          )))) <= ${radius}
+        AND (${city ?? ''}::text = '' OR wp.city ILIKE ${'%' + (city ?? '') + '%'})
         AND (${category ?? ''}::text = '' OR EXISTS (
           SELECT 1 FROM worker_services ws
           JOIN service_categories sc ON sc.id = ws.category_id
           WHERE ws.worker_id = wp.id AND sc.slug = ${category ?? ''}
         ))
-      ORDER BY wp.is_available DESC, distance_km ASC, wp.average_rating DESC
+      ORDER BY wp.is_available DESC, wp.average_rating DESC
       LIMIT ${limit} OFFSET ${skip}
     `;
 
     const countResult: any[] = await this.prisma.$queryRaw`
       SELECT COUNT(*)::int as count
       FROM worker_profiles wp JOIN users u ON u.id = wp.user_id
-      WHERE wp.status = 'ACTIVE' AND wp.latitude IS NOT NULL AND wp.longitude IS NOT NULL
-        AND u.is_active = true
+      WHERE wp.status = 'ACTIVE' AND u.is_active = true
         AND (${available}::boolean = false OR wp.is_available = true)
-        AND (6371 * acos(GREATEST(-1, LEAST(1,
-            cos(radians(${lat})) * cos(radians(wp.latitude)) *
-            cos(radians(wp.longitude) - radians(${lng})) +
-            sin(radians(${lat})) * sin(radians(wp.latitude))
-          )))) <= ${radius}
+        AND (${minRating ?? 0}::float = 0 OR wp.average_rating >= ${minRating ?? 0}::float)
+        AND (${maxPrice ?? 0}::float = 0 OR wp.base_price <= ${maxPrice ?? 0}::float)
+        AND (${city ?? ''}::text = '' OR wp.city ILIKE ${'%' + (city ?? '') + '%'})
     `;
 
     return {
@@ -74,11 +59,10 @@ export class GeoService {
         isAvailable: w.is_available, city: w.city,
         yearsExperience: w.years_experience,
         latitude: w.latitude, longitude: w.longitude,
-        distanceKm: Number(w.distance_km).toFixed(1),
         services: w.services ?? [],
         user: { id: w.user_id, fullName: w.full_name, avatarUrl: w.avatar_url, phone: w.phone },
       })),
-      meta: { total: Number(countResult[0]?.count ?? 0), page, limit, radius, lat, lng },
+      meta: { total: Number(countResult[0]?.count ?? 0), page, limit, city },
     };
   }
 }

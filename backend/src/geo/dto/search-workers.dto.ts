@@ -3,14 +3,8 @@ import { Type, Transform } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class SearchWorkersDto {
-  @ApiProperty({ example: 4.710989 }) @Type(() => Number) @IsNumber()
-  lat: number;
-
-  @ApiProperty({ example: -74.072092 }) @Type(() => Number) @IsNumber()
-  lng: number;
-
-  @ApiPropertyOptional({ default: 10 }) @IsOptional() @Type(() => Number) @IsNumber() @Min(1) @Max(100)
-  radius?: number = 10;
+  @ApiPropertyOptional({ example: 'Bogotá' }) @IsOptional() @IsString()
+  city?: string;
 
   @ApiPropertyOptional({ example: 'plomeria' }) @IsOptional() @IsString()
   category?: string;

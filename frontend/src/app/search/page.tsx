@@ -8,6 +8,13 @@ import { WorkerCard } from '@/components/cards/WorkerCard';
 import { Spinner } from '@/components/ui/Spinner';
 import { EmptyState } from '@/components/ui/EmptyState';
 
+const COLOMBIA_CITIES = [
+  'Bogotá', 'Medellín', 'Cali', 'Barranquilla', 'Cartagena',
+  'Cúcuta', 'Bucaramanga', 'Pereira', 'Santa Marta', 'Ibagué',
+  'Pasto', 'Manizales', 'Neiva', 'Villavicencio', 'Armenia',
+  'Valledupar', 'Montería', 'Sincelejo', 'Popayán', 'Tunja'
+].sort();
+
 function SearchContent() {
   const params = useSearchParams();
   const router = useRouter();
@@ -15,45 +22,23 @@ function SearchContent() {
   const [categories, setCategories] = useState<ServiceCategory[]>([]);
   const [loading, setLoading] = useState(false);
   const [total, setTotal] = useState(0);
-  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
-  const [locationError, setLocationError] = useState(false);
 
   const [filters, setFilters] = useState({
     category: params.get('category') ?? '',
-    radius: 10,
+    city: '',
     minRating: 0,
     maxPrice: 0,
   });
-
-  // Obtener ubicación del usuario
-  useEffect(() => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        ({ coords }) => setUserLocation({ lat: coords.latitude, lng: coords.longitude }),
-        () => {
-          setLocationError(true);
-          // Default: Bogotá
-          setUserLocation({ lat: 4.710989, lng: -74.072092 });
-        },
-        { timeout: 5000 },
-      );
-    } else {
-      setUserLocation({ lat: 4.710989, lng: -74.072092 });
-    }
-  }, []);
 
   useEffect(() => {
     workersApi.getCategories().then(({ data }) => setCategories(data as any)).catch(() => {});
   }, []);
 
   const search = useCallback(async () => {
-    if (!userLocation) return;
     setLoading(true);
     try {
       const { data } = await workersApi.search({
-        lat: userLocation.lat,
-        lng: userLocation.lng,
-        radius: filters.radius,
+        city: filters.city || undefined,
         category: filters.category || undefined,
         minRating: filters.minRating || undefined,
         maxPrice: filters.maxPrice || undefined,
@@ -65,18 +50,15 @@ function SearchContent() {
     } finally {
       setLoading(false);
     }
-  }, [userLocation, filters]);
+  }, [filters]);
 
-  useEffect(() => { if (userLocation) search(); }, [userLocation, search]);
+  useEffect(() => { search(); }, [search]);
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
       <div className="mb-6">
         <h1 className="text-2xl font-extrabold text-gray-900 mb-1">Buscar profesionales</h1>
-        {locationError
-          ? <p className="text-sm text-amber-600 flex items-center gap-1"><MapPin size={14} />Usando ubicación de Bogotá (activa GPS para resultados exactos)</p>
-          : <p className="text-sm text-gray-500 flex items-center gap-1"><MapPin size={14} />Resultados cerca de tu ubicación</p>
-        }
+        <p className="text-sm text-gray-500 flex items-center gap-1"><MapPin size={14} />Encuentra trabajadores en tu ciudad</p>
       </div>
 
       {/* Filtros */}
@@ -93,14 +75,15 @@ function SearchContent() {
               {categories.map(c => <option key={c.id} value={c.slug}>{c.name}</option>)}
             </select>
           </div>
-          <div className="w-32">
-            <label className="label text-xs">Radio (km)</label>
+          <div className="flex-1 min-w-[150px]">
+            <label className="label text-xs">Ciudad</label>
             <select
-              value={filters.radius}
-              onChange={e => setFilters(f => ({ ...f, radius: Number(e.target.value) }))}
+              value={filters.city}
+              onChange={e => setFilters(f => ({ ...f, city: e.target.value }))}
               className="input text-sm py-2"
             >
-              {[5, 10, 20, 30, 50].map(r => <option key={r} value={r}>{r} km</option>)}
+              <option value="">Cualquier ciudad</option>
+              {COLOMBIA_CITIES.map(c => <option key={c} value={c}>{c}</option>)}
             </select>
           </div>
           <div className="w-36">

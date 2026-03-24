@@ -3,8 +3,8 @@ import type { WorkerProfile, SearchResult } from '@/types';
 
 export const workersApi = {
   search: (params: {
-    lat: number; lng: number; radius?: number;
-    category?: string; minRating?: number; maxPrice?: number; page?: number;
+    city?: string; category?: string;
+    minRating?: number; maxPrice?: number; page?: number; limit?: number;
   }) => api.get<SearchResult>('/geo/workers', { params }),
 
   getById: (id: string) => api.get<WorkerProfile>(`/workers/${id}`),
