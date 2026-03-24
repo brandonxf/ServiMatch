@@ -1,6 +1,6 @@
 'use client';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Bell, Wrench, LogOut, User, ChevronDown, MessageSquare, Menu, X } from 'lucide-react';
 import { useAuthStore } from '@/lib/store/auth.store';
@@ -31,8 +31,8 @@ export function Navbar() {
   ];
 
   return (
-    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-gray-100">
-      <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+    <header className="fixed top-0 w-full z-50 bg-white/95 backdrop-blur-md border-b border-gray-100 shadow-sm">
+      <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 font-bold text-xl">
           <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
@@ -55,10 +55,10 @@ export function Navbar() {
         <div className="flex items-center gap-2">
           {user ? (
             <>
-              <Link href="/chat" className="btn-ghost hidden md:flex relative">
+              <Link href="/chat" className="p-2 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors hidden md:flex">
                 <MessageSquare size={18} />
               </Link>
-              <Link href="/notifications" className="btn-ghost hidden md:flex relative">
+              <Link href="/notifications" className="p-2 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors relative hidden md:flex">
                 <Bell size={18} />
                 {unreadCount > 0 && (
                   <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
@@ -70,7 +70,7 @@ export function Navbar() {
               {/* User dropdown */}
               <div className="relative hidden md:block">
                 <button onClick={() => setMenuOpen(!menuOpen)}
-                  className="flex items-center gap-2 px-3 py-1.5 rounded-xl hover:bg-gray-50 transition-colors">
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-xl hover:bg-gray-100 transition-colors">
                   <Avatar src={user.avatarUrl} name={user.fullName} size={32} />
                   <span className="text-sm font-semibold text-gray-800 max-w-[100px] truncate">{user.fullName.split(' ')[0]}</span>
                   <ChevronDown size={14} className="text-gray-400" />
@@ -99,14 +99,16 @@ export function Navbar() {
               </div>
 
               {/* Mobile menu button */}
-              <button onClick={() => setMobileOpen(!mobileOpen)} className="md:hidden btn-ghost p-2">
+              <button onClick={() => setMobileOpen(!mobileOpen)} className="p-2 rounded-lg text-gray-600 hover:bg-gray-100 transition-colors md:hidden">
                 {mobileOpen ? <X size={20} /> : <Menu size={20} />}
               </button>
             </>
           ) : (
             <div className="flex items-center gap-2">
-              <Link href="/auth/login" className="btn-ghost hidden md:flex">Ingresar</Link>
-              <Link href="/auth/register" className="btn-primary">Registrarse</Link>
+              <Link href="/auth/login" className="px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors hidden md:block">Ingresar</Link>
+              <Link href="/auth/register?role=WORKER" className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                Ser profesional
+              </Link>
             </div>
           )}
         </div>
@@ -114,10 +116,11 @@ export function Navbar() {
 
       {/* Mobile menu */}
       {mobileOpen && (
-        <div className="md:hidden border-t border-gray-100 bg-white px-4 py-3 space-y-1">
+        <div className="md:hidden bg-white border-t border-gray-100 px-4 py-3 space-y-1">
           {navLinks.map(l => (
             <Link key={l.href} href={l.href} className="block px-3 py-2.5 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-50">{l.label}</Link>
           ))}
+          <Link href="/auth/register?role=WORKER" className="block px-3 py-2.5 text-sm font-medium text-orange-600 hover:bg-orange-50 rounded-xl">Ser profesional</Link>
           {user ? (
             <button onClick={logout} className="flex items-center gap-2 px-3 py-2.5 text-sm font-medium text-red-600 hover:bg-red-50 rounded-xl w-full">
               <LogOut size={15} /> Cerrar sesión

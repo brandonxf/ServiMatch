@@ -1,111 +1,218 @@
+'use client';
+
 import Link from 'next/link';
-import { Search, Star, Shield, Zap, Wrench, Zap as Lightning, Droplets, Paintbrush } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import {
+  Search, Star, Shield, Zap, Wrench,
+  Droplets, Paintbrush, BadgeCheck,
+  MapPin, ArrowRight
+} from 'lucide-react';
+
+// ── DATA ─────────────────────────────────────
+
+const workers = [
+  { id: '1', name: 'Carlos Mendoza', initials: 'CM', trade: 'Plomero · 8 años', rate: '$45k', rating: '4.9' },
+  { id: '2', name: 'Andrés Torres', initials: 'AT', trade: 'Electricista certificado', rate: '$55k', rating: '4.8' },
+  { id: '3', name: 'Luis Gómez', initials: 'LG', trade: 'Soldador TIG/MIG', rate: '$60k', rating: '5.0' },
+];
 
 const categories = [
-  { name: 'Plomería', slug: 'plomeria', icon: <Droplets size={24} />, color: 'bg-blue-100 text-blue-700' },
-  { name: 'Electricidad', slug: 'electricidad', icon: <Lightning size={24} />, color: 'bg-yellow-100 text-yellow-700' },
-  { name: 'Soldadura', slug: 'soldadura', icon: <Wrench size={24} />, color: 'bg-orange-100 text-orange-700' },
-  { name: 'Pintura', slug: 'pintura', icon: <Paintbrush size={24} />, color: 'bg-purple-100 text-purple-700' },
+  { name: 'Plomería', slug: 'plomeria', icon: Droplets },
+  { name: 'Electricidad', slug: 'electricidad', icon: Zap },
+  { name: 'Soldadura', slug: 'soldadura', icon: Wrench },
+  { name: 'Pintura', slug: 'pintura', icon: Paintbrush },
+  { name: 'Carpintería', slug: 'carpinteria', icon: Wrench },
+  { name: 'Cerrajería', slug: 'cerrajeria', icon: Shield },
 ];
 
 const features = [
-  { icon: <Search size={22} />, title: 'Búsqueda por ubicación', desc: 'Encuentra profesionales cerca de ti en segundos usando tu GPS.' },
-  { icon: <Star size={22} />, title: 'Calificaciones reales', desc: 'Todos los trabajadores tienen reseñas verificadas de clientes anteriores.' },
-  { icon: <Shield size={22} />, title: 'Trabajadores verificados', desc: 'Validamos identidad y certificaciones para tu tranquilidad.' },
-  { icon: <Zap size={22} />, title: 'Contacto instantáneo', desc: 'Chat en tiempo real para coordinar detalles directamente.' },
+  { id: '1', title: 'Cerca de ti', desc: 'Profesionales disponibles según tu ubicación en tiempo real.', stat: '< 2 km' },
+  { id: '2', title: 'Verificados', desc: 'Identidad y experiencia validada antes de publicar.', stat: '100%' },
+  { id: '3', title: 'Respuesta rápida', desc: 'La mayoría responde en minutos.', stat: '~15 min' },
+  { id: '4', title: 'Calificaciones reales', desc: 'Opiniones verificadas de clientes.', stat: '4.8★' },
 ];
 
+// ── COMPONENT ───────────────────────────────
+
 export default function HomePage() {
+  const router = useRouter();
+  const [query, setQuery] = useState('');
+  const [location, setLocation] = useState('');
+
+  const handleSearch = () => {
+    const params = new URLSearchParams();
+    if (query) params.set('q', query);
+    if (location) params.set('location', location);
+    router.push(`/search?${params.toString()}`);
+  };
+
   return (
-    <div>
-      {/* Hero */}
-      <section className="bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 text-white py-20 px-4">
-        <div className="max-w-4xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur px-4 py-1.5 rounded-full text-sm font-medium mb-6">
-            <Zap size={14} /> La plataforma de servicios más confiable
-          </div>
-          <h1 className="text-4xl md:text-6xl font-extrabold leading-tight mb-6">
-            Encuentra el profesional<br />
-            <span className="text-blue-200">que necesitas hoy</span>
-          </h1>
-          <p className="text-lg text-blue-100 mb-10 max-w-2xl mx-auto">
-            Conectamos clientes con plomeros, electricistas, soldadores y más. 
-            Calificados, verificados y cerca de ti.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Link href="/search" className="bg-white text-blue-700 hover:bg-blue-50 font-bold px-8 py-3.5 rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg">
-              <Search size={18} /> Buscar servicios
-            </Link>
-            <Link href="/auth/register?role=WORKER" className="bg-white/10 hover:bg-white/20 backdrop-blur text-white font-bold px-8 py-3.5 rounded-xl border border-white/30 transition-all flex items-center justify-center gap-2">
-              <Wrench size={18} /> Soy trabajador
-            </Link>
+    <div className="bg-[#0f172a] text-white">
+
+      {/* ───────────────── HERO ───────────────── */}
+      <section className="min-h-screen bg-[#0f172a] relative overflow-hidden flex items-center">
+        {/* grid pattern */}
+        <div
+          className="absolute inset-0 opacity-[0.02]"
+          style={{
+            backgroundImage: 'radial-gradient(circle at 1px 1px, white 1px, transparent 0)',
+            backgroundSize: '32px 32px'
+          }}
+        />
+
+        {/* blue glow */}
+        <div className="absolute top-0 left-1/3 w-[500px] h-[500px] bg-blue-600 opacity-[0.08] blur-[120px] rounded-full" />
+
+        <div className="relative max-w-6xl mx-auto px-4 w-full grid md:grid-cols-[55%_45%] gap-10 items-center">
+
+          {/* LEFT */}
+          <div>
+            <h1 className="text-5xl md:text-6xl font-bold leading-tight mb-8">
+              Encuentra el profesional<br />
+              <span className="text-white/70">que necesitas hoy</span>
+            </h1>
+
+            {/* SEARCH */}
+            <div className="flex flex-col sm:flex-row gap-2 bg-white/[0.05] border border-white/[0.1] rounded-2xl p-2">
+              <div className="flex items-center gap-2 flex-1 px-4 py-3">
+                <Search size={16} className="text-white/40" />
+                <input
+                  type="text"
+                  placeholder="¿Qué servicio necesitas?"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  className="bg-transparent outline-none w-full text-sm placeholder-white/40"
+                />
+              </div>
+
+              <div className="flex items-center gap-2 flex-1 px-4 py-3 border-t sm:border-t-0 sm:border-l border-white/10">
+                <MapPin size={16} className="text-white/40" />
+                <input
+                  type="text"
+                  placeholder="Tu ubicación"
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
+                  className="bg-transparent outline-none w-full text-sm placeholder-white/40"
+                />
+              </div>
+
+              <button
+                onClick={handleSearch}
+                className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-6 py-3 rounded-xl transition active:scale-95"
+              >
+                Buscar
+              </button>
+            </div>
           </div>
 
-          {/* Stats */}
-          <div className="grid grid-cols-3 gap-6 mt-14 max-w-md mx-auto">
-            {[['500+', 'Trabajadores'], ['2,000+', 'Servicios/mes'], ['4.8★', 'Calificación']].map(([val, label]) => (
-              <div key={label} className="text-center">
-                <p className="text-2xl font-extrabold text-white">{val}</p>
-                <p className="text-xs text-blue-200 mt-0.5">{label}</p>
+          {/* RIGHT */}
+          <div className="hidden md:flex flex-col gap-3">
+            {workers.map((w, i) => (
+              <div
+                key={w.id}
+                className="bg-white/[0.04] border border-white/[0.08] rounded-2xl p-4 flex items-center gap-4 hover:border-blue-400/40 transition-all"
+                style={{ transform: `translateX(${i * 8}px)` }}
+              >
+                <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-sm font-semibold">
+                  {w.initials}
+                </div>
+
+                <div className="flex-1">
+                  <div className="flex items-center gap-2">
+                    <p className="text-sm font-semibold">{w.name}</p>
+                    <BadgeCheck size={14} className="text-blue-400" />
+                  </div>
+                  <p className="text-white/40 text-xs">{w.trade}</p>
+                  <p className="text-white/25 text-[11px] mt-1">
+                    Disponible hoy · Responde en ~10 min
+                  </p>
+                </div>
+
+                <div className="text-right">
+                  <p className="text-sm font-semibold">{w.rate}/hr</p>
+                  <div className="flex items-center justify-end gap-1">
+                    <Star size={10} className="text-yellow-400 fill-yellow-400" />
+                    <span className="text-xs text-white/50">{w.rating}</span>
+                  </div>
+                </div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Categorías populares */}
-      <section className="max-w-5xl mx-auto px-4 py-16">
-        <h2 className="section-title text-center mb-2">Servicios más solicitados</h2>
-        <p className="text-gray-500 text-center mb-8">Profesionales disponibles ahora mismo</p>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {categories.map(cat => (
-            <Link key={cat.slug} href={`/search?category=${cat.slug}`}
-              className="card p-5 flex flex-col items-center gap-3 hover:shadow-md hover:-translate-y-0.5 transition-all cursor-pointer text-center">
-              <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${cat.color}`}>
-                {cat.icon}
+      {/* ───────────────── CATEGORIES ───────────────── */}
+      <section className="py-24 bg-white">
+        <div className="max-w-6xl mx-auto px-4 text-center mb-12">
+          <h2 className="text-3xl font-bold mb-3 text-[#0f172a]">Servicios disponibles</h2>
+          <p className="text-gray-500">Profesionales listos para ayudarte</p>
+        </div>
+
+        <div className="grid grid-cols-3 md:grid-cols-6 gap-6 max-w-6xl mx-auto px-4">
+          {categories.map((cat) => (
+            <Link
+              key={cat.slug}
+              href={`/search?category=${cat.slug}`}
+              className="bg-white border border-gray-200 rounded-xl p-4 flex flex-col items-center gap-2 hover:border-orange-500 hover:shadow-lg transition"
+            >
+              <div className="w-10 h-10 bg-[#0f172a]/5 rounded-lg flex items-center justify-center">
+                <cat.icon size={18} className="text-[#0f172a]" />
               </div>
-              <span className="font-semibold text-gray-800 text-sm">{cat.name}</span>
+              <span className="text-xs text-[#0f172a]">{cat.name}</span>
             </Link>
           ))}
         </div>
-        <div className="text-center mt-6">
-          <Link href="/search" className="text-blue-600 hover:text-blue-700 font-semibold text-sm">
-            Ver todos los servicios →
-          </Link>
-        </div>
       </section>
 
-      {/* Features */}
-      <section className="bg-gray-50 py-16 px-4">
-        <div className="max-w-5xl mx-auto">
-          <h2 className="section-title text-center mb-2">¿Por qué elegir ServiMatch?</h2>
-          <p className="text-gray-500 text-center mb-10">Diseñado para conectar de forma rápida y segura</p>
-          <div className="grid md:grid-cols-2 gap-6">
-            {features.map(f => (
-              <div key={f.title} className="card p-6 flex gap-4">
-                <div className="w-11 h-11 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center flex-shrink-0">
-                  {f.icon}
-                </div>
-                <div>
-                  <h3 className="font-bold text-gray-900 mb-1">{f.title}</h3>
-                  <p className="text-sm text-gray-500 leading-relaxed">{f.desc}</p>
-                </div>
+      {/* ───────────────── FEATURES ───────────────── */}
+      <section className="py-24 bg-[#0f172a]">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-bold mb-3">
+              Diseñado para funcionar en tiempo real
+            </h2>
+            <p className="text-white/50">
+              Encuentra, compara y contrata sin fricción
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-10 text-center">
+            {features.map((f) => (
+              <div key={f.id} className="bg-white/[0.04] border border-white/[0.08] rounded-2xl p-6 hover:border-blue-400/40 transition">
+                <p className="text-3xl font-bold mb-1 text-white">{f.stat}</p>
+                <p className="text-sm font-medium mb-3 text-blue-400">{f.title}</p>
+                <p className="text-sm text-white/60 leading-relaxed">
+                  {f.desc}
+                </p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* CTA final */}
-      <section className="py-16 px-4 text-center">
-        <div className="max-w-2xl mx-auto">
-          <h2 className="section-title mb-3">¿Eres trabajador independiente?</h2>
-          <p className="text-gray-500 mb-8">Regístrate gratis, crea tu perfil y empieza a recibir clientes hoy mismo.</p>
-          <Link href="/auth/register?role=WORKER" className="btn-primary inline-flex px-8 py-3.5 text-base">
-            <Wrench size={18} /> Crear mi perfil profesional
-          </Link>
+      {/* ───────────────── CTA ───────────────── */}
+      <section className="py-24 bg-white">
+        <div className="max-w-4xl mx-auto px-4">
+          <div className="bg-[#0f172a] rounded-3xl p-10 text-center">
+            <h2 className="text-3xl font-bold mb-4 text-white">
+              ¿Eres trabajador independiente?
+            </h2>
+
+            <p className="text-white/60 mb-8">
+              Crea tu perfil, publica tus servicios y empieza a recibir clientes.
+            </p>
+
+            <Link
+              href="/auth/register?role=WORKER"
+              className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 rounded-xl font-semibold transition inline-flex items-center gap-2"
+            >
+              Crear perfil <ArrowRight size={16} />
+            </Link>
+          </div>
         </div>
       </section>
+
     </div>
   );
 }

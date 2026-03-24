@@ -3,41 +3,42 @@ import { Wrench } from 'lucide-react';
 
 export function Footer() {
   return (
-    <footer className="bg-white border-t border-gray-100 mt-auto">
-      <div className="max-w-6xl mx-auto px-4 py-8">
-        <div className="grid sm:grid-cols-3 gap-8 mb-6">
-          <div>
-            <div className="flex items-center gap-2 mb-3">
-              <div className="w-7 h-7 bg-blue-600 rounded-lg flex items-center justify-center">
-                <Wrench size={14} color="white" />
-              </div>
-              <span className="font-bold text-gray-900">ServiMatch</span>
+    <footer className="py-12 bg-[#0f172a] text-white">
+      <div className="max-w-6xl mx-auto px-4 grid md:grid-cols-3 gap-10">
+
+        <div>
+          <div className="flex items-center gap-2 mb-3">
+            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+              <Wrench size={16} color="white" />
             </div>
-            <p className="text-xs text-gray-500 leading-relaxed">
-              Conectamos clientes con los mejores profesionales independientes de servicios.
-            </p>
+            <span className="font-bold text-lg">ServiMatch</span>
           </div>
-          <div>
-            <p className="font-semibold text-gray-800 text-sm mb-3">Plataforma</p>
-            <div className="space-y-2">
-              {[['/', 'Inicio'], ['/search', 'Buscar servicios'], ['/auth/register', 'Registrarse'], ['/auth/login', 'Ingresar']].map(([href, label]) => (
-                <Link key={href} href={href} className="block text-xs text-gray-500 hover:text-blue-600 transition-colors">{label}</Link>
-              ))}
-            </div>
-          </div>
-          <div>
-            <p className="font-semibold text-gray-800 text-sm mb-3">Trabajadores</p>
-            <div className="space-y-2">
-              {[['/auth/register?role=WORKER', 'Crear perfil gratis'], ['/dashboard/worker', 'Gestionar servicios'], ['/dashboard/requests', 'Mis solicitudes']].map(([href, label]) => (
-                <Link key={href} href={href} className="block text-xs text-gray-500 hover:text-blue-600 transition-colors">{label}</Link>
-              ))}
-            </div>
-          </div>
+          <p className="text-white/50 text-sm leading-relaxed">
+            Conectando clientes con profesionales en tiempo real.
+          </p>
         </div>
-        <div className="border-t border-gray-100 pt-4 flex flex-col sm:flex-row items-center justify-between gap-2">
-          <p className="text-xs text-gray-400">© {new Date().getFullYear()} ServiMatch. Todos los derechos reservados.</p>
-          <p className="text-xs text-gray-400">Hecho con ♥ en Colombia</p>
+
+        <div>
+          <h4 className="font-semibold mb-3">Plataforma</h4>
+          <ul className="text-sm text-white/50 space-y-2">
+            <li><Link href="/search" className="hover:text-blue-400 transition-colors">Buscar servicios</Link></li>
+            <li><Link href="/" className="hover:text-blue-400 transition-colors">Inicio</Link></li>
+            <li><Link href="/auth/register" className="hover:text-blue-400 transition-colors">Registro</Link></li>
+          </ul>
         </div>
+
+        <div>
+          <h4 className="font-semibold mb-3">Legal</h4>
+          <ul className="text-sm text-white/50 space-y-2">
+            <li><Link href="#" className="hover:text-blue-400 transition-colors">Privacidad</Link></li>
+            <li><Link href="#" className="hover:text-blue-400 transition-colors">Términos</Link></li>
+          </ul>
+        </div>
+
+      </div>
+      <div className="max-w-6xl mx-auto px-4 mt-8 pt-6 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-4">
+        <p className="text-sm text-white/40">© {new Date().getFullYear()} ServiMatch. Todos los derechos reservados.</p>
+        <p className="text-sm text-white/40">Hecho con ♥ en Colombia</p>
       </div>
     </footer>
   );
