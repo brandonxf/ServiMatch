@@ -90,10 +90,10 @@ export default function ChatPage() {
   const st = statusLabel[request?.status ?? ''];
 
   return (
-    <div className="flex flex-col h-screen max-h-screen">
+    <div className="flex flex-col h-full bg-white relative">
       {/* Header del chat */}
       <div className="bg-white border-b border-gray-100 px-4 py-3 flex items-center gap-3 flex-shrink-0">
-        <Link href="/dashboard/requests" className="btn-ghost p-1.5 -ml-1.5">
+        <Link href="/chat" className="md:hidden btn-ghost p-1.5 -ml-1.5">
           <ArrowLeft size={18} />
         </Link>
         <div className="flex items-center gap-2.5 flex-1 min-w-0">
@@ -148,8 +148,8 @@ export default function ChatPage() {
       </div>
 
       {/* Input */}
-      <div className="bg-white border-t border-gray-100 px-4 py-3 flex-shrink-0">
-        <div className="flex items-center gap-2 max-w-3xl mx-auto">
+      <div className="bg-white border-t border-gray-100 px-4 py-3 flex-shrink-0 pb-6 md:pb-3">
+        <div className="flex items-center gap-2 w-full">
           <input
             value={text}
             onChange={e => { setText(e.target.value); handleTyping(); }}
