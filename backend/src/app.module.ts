@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ThrottlerModule } from '@nestjs/throttler';
+import { AppController } from './app.controller';
 import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
@@ -14,16 +15,9 @@ import { NotificationsModule } from './notifications/notifications.module';
 
 @Module({
   imports: [
-    // Config global — lee .env automáticamente
     ConfigModule.forRoot({ isGlobal: true }),
-
-    // Rate limiting global: 100 req / 60s por IP
     ThrottlerModule.forRoot([{ ttl: 60000, limit: 100 }]),
-
-    // Base de datos (global, disponible en todos los módulos)
     PrismaModule,
-
-    // Módulos de la aplicación
     AuthModule,
     UsersModule,
     WorkersModule,
@@ -34,5 +28,6 @@ import { NotificationsModule } from './notifications/notifications.module';
     ChatModule,
     NotificationsModule,
   ],
+  controllers: [AppController],
 })
 export class AppModule {}

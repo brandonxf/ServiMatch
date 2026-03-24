@@ -18,11 +18,11 @@ export class AuthService {
   ) {}
 
   async register(dto: RegisterDto) {
-    const exists = await (this.prisma as any).user.findUnique({ where: { email: dto.email } });
+    const exists = await this.prisma.user.findUnique({ where: { email: dto.email } });
     if (exists) throw new ConflictException('El correo ya está registrado');
 
     const passwordHash = await bcrypt.hash(dto.password, 12);
-    const user = await (this.prisma as any).user.create({
+    const user = await this.prisma.user.create({
       data: {
         email: dto.email,
         passwordHash,
@@ -39,7 +39,7 @@ export class AuthService {
   }
 
   async login(dto: LoginDto) {
-    const user = await (this.prisma as any).user.findUnique({ where: { email: dto.email } });
+    const user = await this.prisma.user.findUnique({ where: { email: dto.email } });
     if (!user) throw new UnauthorizedException('Credenciales incorrectas');
     if (!user.isActive) throw new UnauthorizedException('Cuenta suspendida');
 
@@ -52,7 +52,7 @@ export class AuthService {
   }
 
   async refresh(userId: string, refreshToken: string) {
-    const stored = await (this.prisma as any).refreshToken.findFirst({
+    const stored = await this.prisma.refreshToken.findFirst({
       where: { userId, isRevoked: false, expiresAt: { gt: new Date() } },
     });
     if (!stored) throw new UnauthorizedException('Refresh token inválido');
@@ -60,25 +60,25 @@ export class AuthService {
     const valid = await bcrypt.compare(refreshToken, stored.tokenHash);
     if (!valid) throw new UnauthorizedException('Refresh token inválido');
 
-    const user = await (this.prisma as any).user.findUnique({ where: { id: userId } });
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
     if (!user || !user.isActive) throw new UnauthorizedException('Usuario no encontrado');
 
     // Rotar: revocar el anterior y crear uno nuevo
-    await (this.prisma as any).refreshToken.update({ where: { id: stored.id }, data: { isRevoked: true } });
+    await this.prisma.refreshToken.update({ where: { id: stored.id }, data: { isRevoked: true } });
     const tokens = await this.generateTokens(user);
     await this.saveRefreshToken(user.id, tokens.refreshToken);
     return tokens;
   }
 
   async logout(userId: string) {
-    await (this.prisma as any).refreshToken.updateMany({
+    await this.prisma.refreshToken.updateMany({
       where: { userId, isRevoked: false },
       data: { isRevoked: true },
     });
   }
 
   async getMe(userId: string) {
-    const user = await (this.prisma as any).user.findUnique({
+    const user = await this.prisma.user.findUnique({
       where: { id: userId },
       include: { workerProfile: { select: { id: true, status: true, isAvailable: true, averageRating: true } } },
     });
@@ -107,7 +107,7 @@ export class AuthService {
     const tokenHash = await bcrypt.hash(token, 10);
     const expiresAt = new Date();
     expiresAt.setDate(expiresAt.getDate() + 7);
-    await (this.prisma as any).refreshToken.create({ data: { userId, tokenHash, expiresAt } });
+    await this.prisma.refreshToken.create({ data: { userId, tokenHash, expiresAt } });
   }
 
   private sanitizeUser(user: User & { workerProfile?: any }) {

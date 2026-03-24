@@ -7,7 +7,7 @@ export class UsersService {
   constructor(private prisma: PrismaService) {}
 
   async findById(id: string) {
-    const user = await (this.prisma as any).user.findUnique({
+    const user = await this.prisma.user.findUnique({
       where: { id },
       select: {
         id: true, fullName: true, email: true, phone: true,
@@ -26,7 +26,7 @@ export class UsersService {
   }
 
   async update(id: string, dto: UpdateUserDto) {
-    return (this.prisma as any).user.update({
+    return this.prisma.user.update({
       where: { id },
       data: dto,
       select: {
@@ -37,7 +37,7 @@ export class UsersService {
   }
 
   async remove(id: string) {
-    await (this.prisma as any).user.update({
+    await this.prisma.user.update({
       where: { id },
       data: { isActive: false },
     });
@@ -48,7 +48,7 @@ export class UsersService {
   async findAll(page = 1, limit = 20) {
     const skip = (page - 1) * limit;
     const [users, total] = await Promise.all([
-      (this.prisma as any).user.findMany({
+      this.prisma.user.findMany({
         skip, take: limit,
         select: {
           id: true, fullName: true, email: true, role: true,
@@ -56,7 +56,7 @@ export class UsersService {
         },
         orderBy: { createdAt: 'desc' },
       }),
-      (this.prisma as any).user.count(),
+      this.prisma.user.count(),
     ]);
     return { data: users, meta: { total, page, limit } };
   }

@@ -7,34 +7,34 @@ export class ServicesService {
   constructor(private prisma: PrismaService) {}
 
   async findAll() {
-    return (this.prisma as any).serviceCategory.findMany({
+    return this.prisma.serviceCategory.findMany({
       where: { isActive: true },
       orderBy: { name: 'asc' },
     });
   }
 
   async findBySlug(slug: string) {
-    const cat = await (this.prisma as any).serviceCategory.findUnique({ where: { slug } });
+    const cat = await this.prisma.serviceCategory.findUnique({ where: { slug } });
     if (!cat) throw new NotFoundException('Categoría no encontrada');
     return cat;
   }
 
   async create(dto: CreateCategoryDto) {
-    const exists = await (this.prisma as any).serviceCategory.findUnique({ where: { slug: dto.slug } });
+    const exists = await this.prisma.serviceCategory.findUnique({ where: { slug: dto.slug } });
     if (exists) throw new ConflictException('El slug ya existe');
-    return (this.prisma as any).serviceCategory.create({ data: dto });
+    return this.prisma.serviceCategory.create({ data: dto });
   }
 
   async update(id: string, dto: Partial<CreateCategoryDto>) {
-    const cat = await (this.prisma as any).serviceCategory.findUnique({ where: { id } });
+    const cat = await this.prisma.serviceCategory.findUnique({ where: { id } });
     if (!cat) throw new NotFoundException('Categoría no encontrada');
-    return (this.prisma as any).serviceCategory.update({ where: { id }, data: dto });
+    return this.prisma.serviceCategory.update({ where: { id }, data: dto });
   }
 
   async remove(id: string) {
-    const cat = await (this.prisma as any).serviceCategory.findUnique({ where: { id } });
+    const cat = await this.prisma.serviceCategory.findUnique({ where: { id } });
     if (!cat) throw new NotFoundException('Categoría no encontrada');
-    await (this.prisma as any).serviceCategory.update({ where: { id }, data: { isActive: false } });
+    await this.prisma.serviceCategory.update({ where: { id }, data: { isActive: false } });
     return { message: 'Categoría desactivada' };
   }
 
@@ -53,7 +53,7 @@ export class ServicesService {
     ];
 
     for (const cat of categories) {
-      await (this.prisma as any).serviceCategory.upsert({
+      await this.prisma.serviceCategory.upsert({
         where: { slug: cat.slug },
         update: {},
         create: cat,

@@ -24,12 +24,12 @@ export class RequestsService {
   ) {}
 
   async create(clientId: string, dto: CreateRequestDto) {
-    const worker = await (this.prisma as any).workerProfile.findUnique({ where: { id: dto.workerId } });
+    const worker = await this.prisma.workerProfile.findUnique({ where: { id: dto.workerId } });
     if (!worker) throw new NotFoundException('Trabajador no encontrado');
     if (!worker.isAvailable || worker.status !== 'ACTIVE')
       throw new BadRequestException('El trabajador no está disponible');
 
-    const request = await (this.prisma as any).request.create({
+    const request = await this.prisma.request.create({
       data: {
         clientId,
         workerId: dto.workerId,
@@ -63,29 +63,29 @@ export class RequestsService {
     if (role === UserRole.CLIENT) {
       where.clientId = userId;
     } else if (role === UserRole.WORKER) {
-      const profile = await (this.prisma as any).workerProfile.findUnique({ where: { userId } });
+      const profile = await this.prisma.workerProfile.findUnique({ where: { userId } });
       if (!profile) return { data: [], meta: { total: 0 } };
       where.workerId = profile.id;
     }
 
     const [requests, total] = await Promise.all([
-      (this.prisma as any).request.findMany({
+      this.prisma.request.findMany({
         where, include: REQUEST_INCLUDE,
         orderBy: { createdAt: 'desc' },
       }),
-      (this.prisma as any).request.count({ where }),
+      this.prisma.request.count({ where }),
     ]);
     return { data: requests, meta: { total } };
   }
 
   async findById(id: string, userId: string) {
-    const request = await (this.prisma as any).request.findUnique({
+    const request = await this.prisma.request.findUnique({
       where: { id },
       include: { ...REQUEST_INCLUDE, review: true, messages: { take: 1 } },
     });
     if (!request) throw new NotFoundException('Solicitud no encontrada');
 
-    const profile = await (this.prisma as any).workerProfile.findUnique({ where: { userId } });
+    const profile = await this.prisma.workerProfile.findUnique({ where: { userId } });
     const isOwner = request.clientId === userId || profile?.id === request.workerId;
     if (!isOwner) throw new ForbiddenException('Sin acceso a esta solicitud');
 
@@ -98,7 +98,7 @@ export class RequestsService {
     newStatus: 'ACCEPTED' | 'REJECTED' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED',
     notes?: string,
   ) {
-    const request = await (this.prisma as any).request.findUnique({
+    const request = await this.prisma.request.findUnique({
       where: { id },
       include: {
         client: { select: { id: true, fullName: true } },
@@ -107,7 +107,7 @@ export class RequestsService {
     });
     if (!request) throw new NotFoundException('Solicitud no encontrada');
 
-    const profile = await (this.prisma as any).workerProfile.findUnique({ where: { userId } });
+    const profile = await this.prisma.workerProfile.findUnique({ where: { userId } });
     const isClient = request.clientId === userId;
     const isWorker = profile?.id === request.workerId;
 
@@ -121,7 +121,7 @@ export class RequestsService {
     if (newStatus === 'COMPLETED') {
       data.completedAt = new Date();
       // Incrementar contador de trabajos
-      await (this.prisma as any).workerProfile.update({
+      await this.prisma.workerProfile.update({
         where: { id: profile!.id },
         data: { jobsCompleted: { increment: 1 } },
       });
@@ -134,7 +134,7 @@ export class RequestsService {
       data.workerNotes = notes;
     }
 
-    const updated = await (this.prisma as any).request.update({ where: { id }, data, include: REQUEST_INCLUDE });
+    const updated = await this.prisma.request.update({ where: { id }, data, include: REQUEST_INCLUDE });
 
     // Notificar a la otra parte
     const notifyUserId = isWorker ? request.clientId : request.worker.user.id;

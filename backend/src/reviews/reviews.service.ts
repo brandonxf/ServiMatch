@@ -13,7 +13,7 @@ export class ReviewsService {
   ) {}
 
   async create(reviewerId: string, dto: CreateReviewDto) {
-    const request = await (this.prisma as any).request.findUnique({
+    const request = await this.prisma.request.findUnique({
       where: { id: dto.requestId },
       include: { worker: { include: { user: true } } },
     });
@@ -23,10 +23,10 @@ export class ReviewsService {
     if (request.status !== 'COMPLETED')
       throw new BadRequestException('Solo se puede calificar un trabajo completado');
 
-    const exists = await (this.prisma as any).review.findUnique({ where: { requestId: dto.requestId } });
+    const exists = await this.prisma.review.findUnique({ where: { requestId: dto.requestId } });
     if (exists) throw new ConflictException('Ya calificaste este servicio');
 
-    const review = await (this.prisma as any).review.create({
+    const review = await this.prisma.review.create({
       data: {
         requestId: dto.requestId,
         reviewerId,
@@ -52,12 +52,12 @@ export class ReviewsService {
   }
 
   async replyToReview(workerId: string, reviewId: string, reply: string) {
-    const review = await (this.prisma as any).review.findUnique({ where: { id: reviewId } });
+    const review = await this.prisma.review.findUnique({ where: { id: reviewId } });
     if (!review) throw new NotFoundException('Reseña no encontrada');
     if (review.workerId !== workerId) throw new ForbiddenException('Sin permisos');
     if (review.workerReply) throw new ConflictException('Ya respondiste esta reseña');
 
-    return (this.prisma as any).review.update({
+    return this.prisma.review.update({
       where: { id: reviewId },
       data: { workerReply: reply },
     });
@@ -66,24 +66,24 @@ export class ReviewsService {
   async findByWorker(workerId: string, page = 1, limit = 10) {
     const skip = (page - 1) * limit;
     const [reviews, total] = await Promise.all([
-      (this.prisma as any).review.findMany({
+      this.prisma.review.findMany({
         where: { workerId },
         skip, take: limit,
         include: { reviewer: { select: { fullName: true, avatarUrl: true } } },
         orderBy: { createdAt: 'desc' },
       }),
-      (this.prisma as any).review.count({ where: { workerId } }),
+      this.prisma.review.count({ where: { workerId } }),
     ]);
     return { data: reviews, meta: { total, page, limit } };
   }
 
   private async recalcRating(workerId: string) {
-    const result = await (this.prisma as any).review.aggregate({
+    const result = await this.prisma.review.aggregate({
       where: { workerId },
       _avg: { rating: true },
       _count: { rating: true },
     });
-    await (this.prisma as any).workerProfile.update({
+    await this.prisma.workerProfile.update({
       where: { id: workerId },
       data: {
         averageRating: result._avg.rating ?? 0,

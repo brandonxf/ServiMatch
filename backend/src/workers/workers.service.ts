@@ -24,18 +24,18 @@ export class WorkersService {
   constructor(private prisma: PrismaService) {}
 
   async create(userId: string, dto: CreateWorkerDto) {
-    const existing = await (this.prisma as any).workerProfile.findUnique({ where: { userId } });
+    const existing = await this.prisma.workerProfile.findUnique({ where: { userId } });
     if (existing) throw new ConflictException('Ya tienes un perfil de trabajador');
 
-    const [profile] = await (this.prisma as any).$transaction([
-      (this.prisma as any).workerProfile.create({ data: { userId, ...dto }, include: { user: true } }),
-      (this.prisma as any).user.update({ where: { id: userId }, data: { isWorker: true } }),
+    const [profile] = await this.prisma.$transaction([
+      this.prisma.workerProfile.create({ data: { userId, ...dto }, include: { user: true } }),
+      this.prisma.user.update({ where: { id: userId }, data: { isWorker: true } }),
     ]);
     return profile;
   }
 
   async findMyProfile(userId: string) {
-    const profile = await (this.prisma as any).workerProfile.findUnique({
+    const profile = await this.prisma.workerProfile.findUnique({
       where: { userId },
       select: WORKER_SELECT,
     });
@@ -44,7 +44,7 @@ export class WorkersService {
   }
 
   async findById(id: string) {
-    const profile = await (this.prisma as any).workerProfile.findUnique({
+    const profile = await this.prisma.workerProfile.findUnique({
       where: { id },
       select: WORKER_SELECT,
     });
@@ -53,9 +53,9 @@ export class WorkersService {
   }
 
   async update(userId: string, dto: UpdateWorkerDto) {
-    const profile = await (this.prisma as any).workerProfile.findUnique({ where: { userId } });
+    const profile = await this.prisma.workerProfile.findUnique({ where: { userId } });
     if (!profile) throw new NotFoundException('Perfil no encontrado');
-    return (this.prisma as any).workerProfile.update({
+    return this.prisma.workerProfile.update({
       where: { userId },
       data: dto,
       select: WORKER_SELECT,
@@ -63,7 +63,7 @@ export class WorkersService {
   }
 
   async updateLocation(userId: string, lat: number, lng: number) {
-    return (this.prisma as any).workerProfile.update({
+    return this.prisma.workerProfile.update({
       where: { userId },
       data: { latitude: lat, longitude: lng },
       select: { id: true, latitude: true, longitude: true, updatedAt: true },
@@ -71,7 +71,7 @@ export class WorkersService {
   }
 
   async setAvailability(userId: string, isAvailable: boolean) {
-    return (this.prisma as any).workerProfile.update({
+    return this.prisma.workerProfile.update({
       where: { userId },
       data: { isAvailable },
       select: { id: true, isAvailable: true },
@@ -79,47 +79,47 @@ export class WorkersService {
   }
 
   async addService(userId: string, dto: AddServiceDto) {
-    const profile = await (this.prisma as any).workerProfile.findUnique({ where: { userId } });
+    const profile = await this.prisma.workerProfile.findUnique({ where: { userId } });
     if (!profile) throw new NotFoundException('Perfil no encontrado');
 
-    const category = await (this.prisma as any).serviceCategory.findUnique({ where: { id: dto.categoryId } });
+    const category = await this.prisma.serviceCategory.findUnique({ where: { id: dto.categoryId } });
     if (!category) throw new NotFoundException('Categoría no encontrada');
 
-    const existing = await (this.prisma as any).workerService.findUnique({
+    const existing = await this.prisma.workerService.findUnique({
       where: { workerId_categoryId: { workerId: profile.id, categoryId: dto.categoryId } },
     });
     if (existing) throw new ConflictException('Ya ofreces este servicio');
 
     const { categoryId, ...rest } = dto;
-    return (this.prisma as any).workerService.create({
+    return this.prisma.workerService.create({
       data: { workerId: profile.id, categoryId, ...rest },
       include: { category: true },
     });
   }
 
   async removeService(userId: string, serviceId: string) {
-    const profile = await (this.prisma as any).workerProfile.findUnique({ where: { userId } });
+    const profile = await this.prisma.workerProfile.findUnique({ where: { userId } });
     if (!profile) throw new NotFoundException('Perfil no encontrado');
 
-    const ws = await (this.prisma as any).workerService.findFirst({
+    const ws = await this.prisma.workerService.findFirst({
       where: { id: serviceId, workerId: profile.id },
     });
     if (!ws) throw new ForbiddenException('No puedes eliminar este servicio');
 
-    await (this.prisma as any).workerService.delete({ where: { id: serviceId } });
+    await this.prisma.workerService.delete({ where: { id: serviceId } });
     return { message: 'Servicio eliminado' };
   }
 
   async getReviews(workerId: string, page = 1, limit = 10) {
     const skip = (page - 1) * limit;
     const [reviews, total] = await Promise.all([
-      (this.prisma as any).review.findMany({
+      this.prisma.review.findMany({
         where: { workerId },
         skip, take: limit,
         include: { reviewer: { select: { fullName: true, avatarUrl: true } } },
         orderBy: { createdAt: 'desc' },
       }),
-      (this.prisma as any).review.count({ where: { workerId } }),
+      this.prisma.review.count({ where: { workerId } }),
     ]);
     return { data: reviews, meta: { total, page, limit } };
   }

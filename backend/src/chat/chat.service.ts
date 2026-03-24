@@ -8,7 +8,7 @@ export class ChatService {
   constructor(private prisma: PrismaService) {}
 
   private async verifyAccess(requestId: string, userId: string) {
-    const request = await (this.prisma as any).request.findUnique({
+    const request = await this.prisma.request.findUnique({
       where: { id: requestId },
       include: { worker: true },
     });
@@ -21,7 +21,7 @@ export class ChatService {
 
   async sendMessage(senderId: string, dto: SendMessageDto) {
     await this.verifyAccess(dto.requestId, senderId);
-    return (this.prisma as any).message.create({
+    return this.prisma.message.create({
       data: {
         requestId: dto.requestId,
         senderId,
@@ -38,14 +38,14 @@ export class ChatService {
   async getMessages(requestId: string, userId: string, page = 1, limit = 50) {
     await this.verifyAccess(requestId, userId);
     const skip = (page - 1) * limit;
-    const messages = await (this.prisma as any).message.findMany({
+    const messages = await this.prisma.message.findMany({
       where: { requestId },
       skip, take: limit,
       orderBy: { createdAt: 'asc' },
       include: { sender: { select: { id: true, fullName: true, avatarUrl: true } } },
     });
     // Marcar como leídos los mensajes del otro
-    await (this.prisma as any).message.updateMany({
+    await this.prisma.message.updateMany({
       where: { requestId, senderId: { not: userId }, isRead: false },
       data: { isRead: true, readAt: new Date() },
     });
@@ -54,7 +54,7 @@ export class ChatService {
 
   async getConversations(userId: string) {
     // Obtener requests donde el usuario participa, con último mensaje
-    const requests = await (this.prisma as any).request.findMany({
+    const requests = await this.prisma.request.findMany({
       where: {
         OR: [
           { clientId: userId },
