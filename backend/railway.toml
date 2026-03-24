@@ -5,8 +5,3 @@ builder = "nixpacks"
 startCommand = "npx prisma migrate deploy && node dist/main"
 restartPolicyType = "on_failure"
 restartPolicyMaxRetries = 3
-
-[environments.production]
-DATABASE_URL = { secret = "DATABASE_URL" }
-JWT_SECRET = { secret = "JWT_SECRET" }
-JWT_REFRESH_SECRET = { secret = "JWT_REFRESH_SECRET" }

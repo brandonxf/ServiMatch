@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x", "debian-openssl-3.0.x"]
 }
 
 datasource db {
@@ -58,10 +59,10 @@ model User {
   avatarUrl    String?  @map("avatar_url")
   role         UserRole @default(CLIENT)
   isWorker     Boolean  @default(false) @map("is_worker")
-  isActive     Boolean  @default(true) @map("is_active")
+  isActive     Boolean  @default(true)  @map("is_active")
   isVerified   Boolean  @default(false) @map("is_verified")
   createdAt    DateTime @default(now()) @map("created_at")
-  updatedAt    DateTime @updatedAt @map("updated_at")
+  updatedAt    DateTime @updatedAt      @map("updated_at")
 
   workerProfile  WorkerProfile?
   requestsClient Request[]      @relation("ClientRequests")
@@ -77,27 +78,27 @@ model WorkerProfile {
   id               String       @id @default(uuid())
   userId           String       @unique @map("user_id")
   bio              String?
-  basePrice        Decimal?     @map("base_price") @db.Decimal(10, 2)
-  priceUnit        PriceUnit    @default(HOUR) @map("price_unit")
-  coverageRadiusKm Int          @default(10) @map("coverage_radius_km")
+  basePrice        Decimal?     @map("base_price")         @db.Decimal(10, 2)
+  priceUnit        PriceUnit    @default(HOUR)             @map("price_unit")
+  coverageRadiusKm Int          @default(10)               @map("coverage_radius_km")
   latitude         Float?
   longitude        Float?
   city             String?
   address          String?
   yearsExperience  Int?         @map("years_experience")
-  averageRating    Decimal      @default(0) @map("average_rating") @db.Decimal(3, 2)
-  reviewCount      Int          @default(0) @map("review_count")
-  jobsCompleted    Int          @default(0) @map("jobs_completed")
+  averageRating    Decimal      @default(0)                @map("average_rating")  @db.Decimal(3, 2)
+  reviewCount      Int          @default(0)                @map("review_count")
+  jobsCompleted    Int          @default(0)                @map("jobs_completed")
   status           WorkerStatus @default(ACTIVE)
-  isAvailable      Boolean      @default(true) @map("is_available")
-  createdAt        DateTime     @default(now()) @map("created_at")
-  updatedAt        DateTime     @updatedAt @map("updated_at")
+  isAvailable      Boolean      @default(true)             @map("is_available")
+  createdAt        DateTime     @default(now())            @map("created_at")
+  updatedAt        DateTime     @updatedAt                 @map("updated_at")
 
-  user           User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user           User            @relation(fields: [userId],   references: [id], onDelete: Cascade)
   workerServices WorkerService[]
   photos         WorkerPhoto[]
-  requests       Request[]        @relation("WorkerRequests")
-  reviews        Review[]         @relation("WorkerReviews")
+  requests       Request[]       @relation("WorkerRequests")
+  reviews        Review[]        @relation("WorkerReviews")
 
   @@map("worker_profiles")
 }
@@ -125,7 +126,7 @@ model WorkerService {
   description String?
   createdAt   DateTime @default(now()) @map("created_at")
 
-  worker   WorkerProfile   @relation(fields: [workerId], references: [id], onDelete: Cascade)
+  worker   WorkerProfile   @relation(fields: [workerId],   references: [id], onDelete: Cascade)
   category ServiceCategory @relation(fields: [categoryId], references: [id])
 
   @@unique([workerId, categoryId])
@@ -146,30 +147,30 @@ model WorkerPhoto {
 }
 
 model Request {
-  id          String        @id @default(uuid())
-  clientId    String        @map("client_id")
-  workerId    String        @map("worker_id")
-  categoryId  String        @map("category_id")
-  title       String
-  description String?
-  latitude    Float?
-  longitude   Float?
-  address     String?
-  scheduledAt DateTime?     @map("scheduled_at")
-  status      RequestStatus @default(PENDING)
-  budget      Decimal?      @db.Decimal(10, 2)
-  finalPrice  Decimal?      @map("final_price") @db.Decimal(10, 2)
-  clientNotes String?       @map("client_notes")
-  workerNotes String?       @map("worker_notes")
-  cancelledBy String?       @map("cancelled_by")
-  cancelReason String?      @map("cancel_reason")
-  completedAt DateTime?     @map("completed_at")
-  createdAt   DateTime      @default(now()) @map("created_at")
-  updatedAt   DateTime      @updatedAt @map("updated_at")
+  id           String        @id @default(uuid())
+  clientId     String        @map("client_id")
+  workerId     String        @map("worker_id")
+  categoryId   String        @map("category_id")
+  title        String
+  description  String?
+  latitude     Float?
+  longitude    Float?
+  address      String?
+  scheduledAt  DateTime?     @map("scheduled_at")
+  status       RequestStatus @default(PENDING)
+  budget       Decimal?                          @db.Decimal(10, 2)
+  finalPrice   Decimal?      @map("final_price") @db.Decimal(10, 2)
+  clientNotes  String?       @map("client_notes")
+  workerNotes  String?       @map("worker_notes")
+  cancelledBy  String?       @map("cancelled_by")
+  cancelReason String?       @map("cancel_reason")
+  completedAt  DateTime?     @map("completed_at")
+  createdAt    DateTime      @default(now())     @map("created_at")
+  updatedAt    DateTime      @updatedAt          @map("updated_at")
 
-  client   User            @relation("ClientRequests", fields: [clientId], references: [id])
-  worker   WorkerProfile   @relation("WorkerRequests", fields: [workerId], references: [id])
-  category ServiceCategory @relation(fields: [categoryId], references: [id])
+  client   User            @relation("ClientRequests", fields: [clientId],   references: [id])
+  worker   WorkerProfile   @relation("WorkerRequests", fields: [workerId],   references: [id])
+  category ServiceCategory @relation(fields: [categoryId],                   references: [id])
   review   Review?
   messages Message[]
 
@@ -186,9 +187,9 @@ model Review {
   workerReply String?  @map("worker_reply")
   createdAt   DateTime @default(now()) @map("created_at")
 
-  request  Request       @relation(fields: [requestId], references: [id])
+  request  Request       @relation(fields: [requestId],  references: [id])
   reviewer User          @relation("ReviewerReviews", fields: [reviewerId], references: [id])
-  worker   WorkerProfile @relation("WorkerReviews", fields: [workerId], references: [id])
+  worker   WorkerProfile @relation("WorkerReviews",   fields: [workerId],   references: [id])
 
   @@map("reviews")
 }
@@ -212,14 +213,14 @@ model Message {
 }
 
 model Notification {
-  id        String           @id @default(uuid())
-  userId    String           @map("user_id")
-  type      NotificationType
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  type      String
   title     String
   body      String
   data      Json?
-  isRead    Boolean          @default(false) @map("is_read")
-  createdAt DateTime         @default(now()) @map("created_at")
+  isRead    Boolean  @default(false) @map("is_read")
+  createdAt DateTime @default(now()) @map("created_at")
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
