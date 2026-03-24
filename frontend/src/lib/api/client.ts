@@ -35,7 +35,10 @@ api.interceptors.response.use(
       } catch {
         isRefreshing = false;
         localStorage.removeItem('access_token');
-        if (typeof window !== 'undefined') window.location.href = '/auth/login';
+        localStorage.removeItem('servimatch-auth'); // Limpiar caché de Zustand para evitar auto-rehidratación
+        if (typeof window !== 'undefined' && !window.location.pathname.startsWith('/auth')) {
+          window.location.href = '/auth/login';
+        }
       }
     }
     return Promise.reject(error);
