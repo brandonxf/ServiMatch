@@ -33,7 +33,8 @@ export default function LoginPage() {
       toast.success(`Bienvenido, ${res.data.user.fullName.split(' ')[0]}!`);
       router.push('/dashboard');
     } catch (err: any) {
-      toast.error(err.response?.data?.message ?? 'Credenciales incorrectas');
+      const isNetworkError = !err.response;
+      toast.error(err.response?.data?.message ?? (isNetworkError ? 'No se pudo conectar al servidor. ¿Está corriendo el backend?' : 'Credenciales incorrectas'));
     }
   };
 

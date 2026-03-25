@@ -44,6 +44,10 @@ export default function RequestsPage() {
   };
 
   const handleStatusChange = async (id: string, action: string) => {
+    if (action === 'reload_reviews') {
+      load();
+      return;
+    }
     try {
       const map: Record<string, () => Promise<any>> = {
         accept: () => requestsApi.accept(id),
