@@ -15,6 +15,10 @@ export function Navbar() {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  const isLanding = pathname === '/';
+  const transparent = isLanding && !scrolled && !mobileOpen;
 
   useEffect(() => {
     if (user) {
@@ -23,6 +27,14 @@ export function Navbar() {
   }, [user, setAll]);
 
   useEffect(() => { setMobileOpen(false); setMenuOpen(false); }, [pathname]);
+
+  useEffect(() => {
+    if (!isLanding) return;
+    const onScroll = () => setScrolled(window.scrollY > 40);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, [isLanding]);
 
   if (pathname?.startsWith('/auth')) return null;
 
@@ -33,11 +45,17 @@ export function Navbar() {
   ];
 
   return (
-    <header className="fixed top-0 w-full z-50 bg-white/70 backdrop-blur-xl border-b border-gray-200/60 shadow-sm transition-all duration-300">
+    <header className={cn(
+      'fixed top-0 w-full z-50 transition-all duration-300',
+      transparent
+        ? 'bg-transparent border-b border-transparent'
+        : 'bg-white/90 backdrop-blur-xl border-b border-gray-200/60 shadow-sm'
+    )}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-1 font-bold text-xl tracking-tight hover:opacity-80 transition-opacity">
-          <span className="text-slate-900">Servi</span><span className="text-blue-600">Match</span>
+          <span className={transparent ? 'text-white' : 'text-slate-900'}>Servi</span>
+          <span className={transparent ? 'text-blue-400' : 'text-blue-600'}>Match</span>
         </Link>
 
         {/* Desktop nav */}
@@ -46,11 +64,14 @@ export function Navbar() {
             {navLinks.map(l => (
               <Link key={l.href} href={l.href} className={cn(
                 'text-sm font-medium transition-all duration-200 relative group',
-                pathname === l.href ? 'text-blue-600' : 'text-slate-600 hover:text-blue-600'
+                pathname === l.href
+                  ? (transparent ? 'text-blue-400' : 'text-blue-600')
+                  : (transparent ? 'text-white/70 hover:text-white' : 'text-slate-600 hover:text-blue-600')
               )}>
                 {l.label}
                  <span className={cn(
-                  "absolute -bottom-1 left-0 w-full h-[2px] rounded-full bg-blue-600 transition-all duration-300",
+                  "absolute -bottom-1 left-0 w-full h-[2px] rounded-full transition-all duration-300",
+                  transparent ? 'bg-blue-400' : 'bg-blue-600',
                   pathname === l.href ? "opacity-100" : "opacity-0 scale-x-0 group-hover:opacity-100 group-hover:scale-x-100"
                 )} />
               </Link>
@@ -62,10 +83,16 @@ export function Navbar() {
         <div className="flex items-center gap-5 ml-auto">
           {user ? (
             <>
-              <Link href="/chat" className="text-slate-500 hover:text-slate-900 transition-colors hidden md:flex">
+              <Link href="/chat" className={cn(
+                'transition-colors hidden md:flex',
+                transparent ? 'text-white/70 hover:text-white' : 'text-slate-500 hover:text-slate-900'
+              )}>
                 <MessageSquare size={20} />
               </Link>
-              <Link href="/notifications" className="text-slate-500 hover:text-slate-900 transition-colors relative hidden md:flex">
+              <Link href="/notifications" className={cn(
+                'transition-colors relative hidden md:flex',
+                transparent ? 'text-white/70 hover:text-white' : 'text-slate-500 hover:text-slate-900'
+              )}>
                 <Bell size={20} />
                 {unreadCount > 0 && (
                   <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-blue-600 text-white text-[10px] font-bold rounded-full flex items-center justify-center border-2 border-white">
@@ -77,9 +104,12 @@ export function Navbar() {
               {/* User dropdown */}
               <div className="relative hidden md:block" onMouseLeave={() => setMenuOpen(false)}>
                 <button onClick={() => setMenuOpen(!menuOpen)} onMouseEnter={() => setMenuOpen(true)}
-                  className="flex items-center gap-2 pl-2 pr-1 py-1 rounded-full hover:bg-slate-50 transition-colors focus:outline-none">
+                  className={cn(
+                    'flex items-center gap-2 pl-2 pr-1 py-1 rounded-full transition-colors focus:outline-none',
+                    transparent ? 'hover:bg-white/10' : 'hover:bg-slate-50'
+                  )}>
                   <Avatar src={user.avatarUrl} name={user.fullName} size={32} />
-                  <ChevronDown size={16} className="text-slate-400" />
+                  <ChevronDown size={16} className={transparent ? 'text-white/60' : 'text-slate-400'} />
                 </button>
                 {menuOpen && (
                   <>
@@ -107,18 +137,31 @@ export function Navbar() {
               </div>
 
               {/* Mobile menu button */}
-              <button onClick={() => setMobileOpen(!mobileOpen)} className="p-2 -mr-2 text-slate-600 hover:bg-slate-100 rounded-md transition-colors md:hidden">
+              <button onClick={() => setMobileOpen(!mobileOpen)} className={cn(
+                'p-2 -mr-2 rounded-md transition-colors md:hidden',
+                transparent ? 'text-white hover:bg-white/10' : 'text-slate-600 hover:bg-slate-100'
+              )}>
                 {mobileOpen ? <X size={24} /> : <Menu size={24} />}
               </button>
             </>
           ) : (
             <div className="flex items-center gap-4">
-              <Link href="/auth/login" className="text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors hidden md:block">
+              <Link href="/auth/login" className={cn(
+                'text-sm font-medium transition-colors hidden md:block',
+                transparent ? 'text-white/80 hover:text-white' : 'text-slate-600 hover:text-blue-600'
+              )}>
                 Ingresar
               </Link>
               <Link href="/auth/register?role=WORKER" className="bg-orange-500 hover:bg-orange-600 text-white px-5 py-2.5 rounded-lg text-sm font-medium shadow-md shadow-orange-500/20 transform hover:-translate-y-0.5 transition-all duration-200 active:scale-95">
                 Ser profesional
               </Link>
+              {/* Mobile menu button (logged out) */}
+              <button onClick={() => setMobileOpen(!mobileOpen)} className={cn(
+                'p-2 -mr-2 rounded-md transition-colors md:hidden',
+                transparent ? 'text-white hover:bg-white/10' : 'text-slate-600 hover:bg-slate-100'
+              )}>
+                {mobileOpen ? <X size={24} /> : <Menu size={24} />}
+              </button>
             </div>
           )}
         </div>
