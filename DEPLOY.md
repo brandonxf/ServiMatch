@@ -5,51 +5,44 @@
 | Servicio | Plataforma | Costo |
 |----------|-----------|-------|
 | Frontend | Vercel | Gratis |
-| Backend | Railway | Gratis (500h/mes) |
-| PostgreSQL | Railway Plugin | Gratis (1GB) |
-| Redis | Upstash | Gratis (10k req/día) |
+| Backend | Vercel (serverless) | Gratis |
+| PostgreSQL | Neon | Gratis |
 
 ---
 
-## 1. Deploy del Backend en Railway
+## 1. Deploy del Backend en Vercel (serverless)
+
+El backend NestJS corre como una función serverless (`backend/api/index.js` → `dist/serverless.js`).
+
+> **Limitación:** Vercel no mantiene conexiones WebSocket. El chat funciona por REST con consulta cada 4 s
+> (el gateway de Socket.io sigue en el código, pero no se usa en producción).
 
 ### Paso 1 — Crear proyecto
-1. Ir a [railway.app](https://railway.app) → **New Project**
-2. **Deploy from GitHub repo** → elegir `ServiMatch`
-3. Cuando pregunte el directorio: escribir **`backend`**
+1. [vercel.com](https://vercel.com) → **New Project** → importar `ServiMatch`
+2. **Root Directory**: `backend` (proyecto distinto al del frontend)
+3. Framework: *Other* (el `vercel.json` ya define build, salida y rewrites)
 
-### Paso 2 — Agregar PostgreSQL
-1. En el proyecto de Railway → **+ New** → **Database** → **PostgreSQL**
-2. Railway conecta automáticamente la variable `DATABASE_URL`
-
-### Paso 3 — Variables de entorno en Railway
-En tu servicio backend → **Variables** → agregar:
-
+### Paso 2 — Variables de entorno
 ```
+DATABASE_URL=<Postgres con pooling, p. ej. la URL "pooler" de Neon>
 JWT_SECRET=<genera con: node -e "console.log(require('crypto').randomBytes(32).toString('hex'))">
 JWT_EXPIRES_IN=15m
 JWT_REFRESH_SECRET=<otro string aleatorio diferente>
 JWT_REFRESH_EXPIRES_IN=7d
-PORT=3001
 NODE_ENV=production
-FRONTEND_URL=https://tu-app.vercel.app
-REDIS_HOST=<host de Upstash>
-REDIS_PORT=6379
-REDIS_PASSWORD=<password de Upstash>
+FRONTEND_URL=https://servi-match.vercel.app
 ```
+Redis ya no se usa.
 
-### Paso 4 — El deploy corre automáticamente
-Railway detecta `nixpacks.toml` y ejecuta en orden:
-1. `npm ci` — instala dependencias
-2. `npx prisma generate` — genera el cliente Prisma
-3. `npm run build` — compila NestJS
-4. Al iniciar: `npx prisma migrate deploy && node dist/main`
-
-### Paso 5 — Seed de datos (solo primera vez)
-En Railway → tu servicio → **Shell**:
+### Paso 3 — Migraciones (manual, desde tu máquina)
+Las migraciones no corren en el deploy:
 ```bash
-node -e "require('./prisma/seed')"
+cd backend
+DATABASE_URL='<url de producción>' npx prisma migrate deploy
 ```
+
+### Paso 4 — Probar
+`https://<tu-backend>.vercel.app/v1/services` debe responder JSON.
 
 ---
 
@@ -65,7 +58,7 @@ node -e "require('./prisma/seed')"
 En **Settings** → **Environment Variables**:
 
 ```
-NEXT_PUBLIC_API_URL=https://tu-backend.railway.app/v1
+NEXT_PUBLIC_API_URL=https://<tu-backend>.vercel.app/v1
 NEXT_PUBLIC_MAPBOX_TOKEN=pk.eyJ1... (opcional — consíguelo en mapbox.com gratis)
 ```
 

@@ -2,7 +2,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { ArrowLeft, Send, Loader2 } from 'lucide-react';
-import { io, Socket } from 'socket.io-client';
 import { chatApi } from '@/lib/api/chat';
 import { requestsApi } from '@/lib/api/requests';
 import type { Message, Request } from '@/types';
@@ -21,16 +20,13 @@ export default function ChatPage() {
   const [text, setText] = useState('');
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
-  const [isTyping, setIsTyping] = useState(false);
-  const socketRef = useRef<Socket | null>(null);
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
-  const typingRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   useEffect(() => {
     const token = typeof window !== 'undefined' ? localStorage.getItem('access_token') : null;
     if (!token) { router.push('/auth/login'); return; }
 
-    // Cargar datos
+    // Carga inicial
     Promise.all([
       requestsApi.getById(requestId),
       chatApi.getMessages(requestId),
@@ -39,27 +35,14 @@ export default function ChatPage() {
       setMessages(msgs.data as any);
     }).finally(() => setLoading(false));
 
-    // Conectar socket
-    const socket = io(process.env.NEXT_PUBLIC_API_URL?.replace('/v1', '') || 'http://localhost:3001', {
-      auth: { token },
-      transports: ['websocket'],
-    });
-    socketRef.current = socket;
+    // El backend corre en serverless (sin WebSockets persistentes):
+    // se consulta periódicamente mientras la pestaña está visible.
+    const poll = setInterval(() => {
+      if (document.visibilityState !== 'visible') return;
+      chatApi.getMessages(requestId).then(({ data }) => setMessages(data as any)).catch(() => {});
+    }, 4000);
 
-    socket.on('connect', () => {
-      socket.emit('join_room', { requestId });
-    });
-
-    socket.on('new_message', (msg: Message) => {
-      setMessages(prev => [...prev, msg]);
-    });
-
-    socket.on('user_typing', () => {
-      setIsTyping(true);
-      setTimeout(() => setIsTyping(false), 2000);
-    });
-
-    return () => { socket.disconnect(); };
+    return () => clearInterval(poll);
   }, [requestId]);
 
   useEffect(() => {
@@ -67,7 +50,7 @@ export default function ChatPage() {
       const container = messagesContainerRef.current;
       container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
     }
-  }, [messages, isTyping]);
+  }, [messages]);
 
   const sendMessage = async () => {
     if (!text.trim() || sending) return;
@@ -75,16 +58,11 @@ export default function ChatPage() {
     const content = text.trim();
     setText('');
     try {
-      socketRef.current?.emit('send_message', { requestId, content });
-      // Fallback REST si el socket falla
+      const { data } = await chatApi.send(requestId, content);
+      setMessages(prev => prev.some(m => m.id === data.id) ? prev : [...prev, data]);
     } catch {
-      await chatApi.send(requestId, content);
+      setText(content);
     } finally { setSending(false); }
-  };
-
-  const handleTyping = () => {
-    socketRef.current?.emit('typing', { requestId });
-    clearTimeout(typingRef.current);
   };
 
   if (loading) return <div className="flex items-center justify-center h-full min-h-[50vh]"><Spinner size={36} /></div>;
@@ -138,18 +116,6 @@ export default function ChatPage() {
             </div>
           );
         })}
-        {isTyping && (
-          <div className="flex gap-2 items-end">
-            <Avatar src={otherUser?.avatarUrl} name={otherUser?.fullName ?? '?'} size={28} />
-            <div className="bg-white border border-ink rounded-2xl rounded-tl-sm px-4 py-3 shadow-sm">
-              <div className="flex gap-1 items-center h-3">
-                {[0, 1, 2].map(i => (
-                  <div key={i} className="w-2 h-2 bg-ink animate-bounce motion-reduce:animate-none" style={{ animationDelay: `${i * 0.15}s` }} />
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
       </div>
 
       {/* Input */}
@@ -157,7 +123,7 @@ export default function ChatPage() {
         <div className="flex items-center gap-2 w-full">
           <input
             value={text}
-            onChange={e => { setText(e.target.value); handleTyping(); }}
+            onChange={e => setText(e.target.value)}
             onKeyDown={e => e.key === 'Enter' && !e.shiftKey && sendMessage()}
             aria-label="Mensaje" placeholder="Escribe un mensaje..."
             className="input flex-1 py-2.5"
