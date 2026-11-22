@@ -12,7 +12,7 @@ export function StarRating({ rating, max = 5, size = 16, interactive, onChange }
           key={i}
           size={size}
           className={cn(
-            i < Math.round(rating) ? 'text-yellow-400 fill-yellow-400' : 'text-gray-200 fill-gray-200',
+            i < Math.round(rating) ? 'text-ink fill-signal' : 'text-ink/30 fill-transparent',
             interactive && 'cursor-pointer hover:scale-110 transition-transform'
           )}
           onClick={() => interactive && onChange?.(i + 1)}

@@ -36,67 +36,64 @@ export function ReviewModal({ requestId, workerName, onClose, onSuccess }: Props
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-      <div className="card w-full max-w-md bg-white rounded-3xl overflow-hidden shadow-[0_8px_40px_rgba(0,0,0,0.2)] animate-in fade-in zoom-in duration-200">
-        <div className="flex justify-between items-center p-5 border-b border-gray-100">
-          <h3 className="font-extrabold text-gray-900 text-lg">Calificar a {workerName}</h3>
-          <button onClick={onClose} className="p-2 text-gray-400 hover:text-gray-600 transition-colors rounded-full hover:bg-gray-100">
-            <X size={20} />
+    <div className="fixed inset-0 bg-ink/60 z-50 flex items-center justify-center p-4">
+      <div role="dialog" aria-modal="true" aria-labelledby="review-title" className="w-full max-w-md bg-paper border-2 border-ink shadow-brutal-lg">
+        <div className="flex justify-between items-center p-4 border-b-2 border-ink bg-signal">
+          <h3 id="review-title" className="font-display font-bold text-lg uppercase tracking-tight">Calificar a {workerName}</h3>
+          <button onClick={onClose} aria-label="Cerrar" className="size-11 flex items-center justify-center border-2 border-ink bg-white hover:bg-ink hover:text-signal transition-colors">
+            <X size={20} aria-hidden="true" />
           </button>
         </div>
-        
+
         <div className="p-6 space-y-6">
-          <div className="flex flex-col items-center gap-3">
-            <p className="text-sm font-semibold text-gray-700">¿Qué te pareció el servicio?</p>
-            <div className="flex items-center gap-2">
+          <fieldset className="flex flex-col items-center gap-3">
+            <legend className="label text-center">¿Qué te pareció el servicio?</legend>
+            <div className="flex items-center gap-1">
               {[1, 2, 3, 4, 5].map((star) => (
                 <button
                   key={star}
                   type="button"
+                  aria-label={`${star} ${star === 1 ? 'estrella' : 'estrellas'}`}
+                  aria-pressed={rating === star}
                   onClick={() => setRating(star)}
                   onMouseEnter={() => setHoveredRating(star)}
                   onMouseLeave={() => setHoveredRating(0)}
-                  className="transition-transform hover:scale-110 focus:outline-none"
+                  className="size-12 flex items-center justify-center transition-transform hover:scale-110 motion-reduce:transform-none"
                 >
                   <Star
                     size={36}
-                    className={`transition-colors ${
-                      star <= (hoveredRating || rating)
-                        ? 'fill-yellow-400 text-yellow-500'
-                        : 'text-gray-200'
-                    }`}
+                    strokeWidth={2.25}
+                    aria-hidden="true"
+                    className={star <= (hoveredRating || rating) ? 'fill-signal text-ink' : 'fill-white text-ink'}
                   />
                 </button>
               ))}
             </div>
-            <p className="text-xs text-gray-500 font-medium">
+            <p aria-live="polite" className="font-mono text-xs font-bold uppercase tracking-wider min-h-4">
               {rating === 1 && 'Muy malo'}
               {rating === 2 && 'Malo'}
               {rating === 3 && 'Regular'}
               {rating === 4 && 'Bueno'}
               {rating === 5 && '¡Excelente!'}
             </p>
-          </div>
+          </fieldset>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Comentario (opcional)</label>
+            <label htmlFor="review-comment" className="label">Comentario (opcional)</label>
             <textarea
+              id="review-comment"
               value={comment}
               onChange={(e) => setComment(e.target.value)}
               placeholder="Escribe tu opinión sobre el trabajo realizado..."
-              className="input w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all placeholder:text-gray-400 resize-none h-28"
+              className="input resize-none h-28"
             />
           </div>
 
-          <button
-            onClick={handleSubmit}
-            disabled={isSubmitting}
-            className="w-full btn-primary py-3.5 text-base rounded-xl font-bold flex items-center justify-center gap-2"
-          >
+          <button onClick={handleSubmit} disabled={isSubmitting} className="w-full btn-primary py-3.5 text-base">
             {isSubmitting ? (
               <><Spinner size={20} /> Enviando...</>
             ) : (
-              'Enviar Calificación'
+              'Enviar calificación'
             )}
           </button>
         </div>

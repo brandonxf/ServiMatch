@@ -57,8 +57,8 @@ function SearchContent() {
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
       <div className="mb-6">
-        <h1 className="text-2xl font-extrabold text-gray-900 mb-1">Buscar profesionales</h1>
-        <p className="text-sm text-gray-500 flex items-center gap-1"><MapPin size={14} />Encuentra trabajadores en tu ciudad</p>
+        <h1 className="font-display text-3xl font-bold uppercase tracking-tight text-ink mb-1">Buscar profesionales</h1>
+        <p className="text-sm text-ink/70 flex items-center gap-1"><MapPin size={14} />Encuentra trabajadores en tu ciudad</p>
       </div>
 
       {/* Filtros */}
@@ -109,7 +109,7 @@ function SearchContent() {
         <div className="flex items-center justify-center py-20">
           <div className="text-center">
             <Spinner size={32} className="mx-auto mb-3" />
-            <p className="text-gray-500 text-sm">Buscando profesionales...</p>
+            <p className="text-ink/70 text-sm">Buscando profesionales...</p>
           </div>
         </div>
       ) : workers.length === 0 ? (
@@ -120,8 +120,8 @@ function SearchContent() {
         />
       ) : (
         <>
-          <p className="text-sm text-gray-500 mb-4">
-            <span className="font-semibold text-gray-800">{total}</span> profesionales encontrados
+          <p className="text-sm text-ink/70 mb-4">
+            <span className="font-semibold text-ink">{total}</span> profesionales encontrados
           </p>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {workers.map(w => <WorkerCard key={w.id} worker={w} />)}

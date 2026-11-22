@@ -20,12 +20,12 @@ export const priceUnitLabel = (unit: string) =>
   ({ HOUR: '/ hora', SERVICE: '/ servicio', DAY: '/ día' }[unit] ?? '');
 
 export const statusLabel: Record<string, { label: string; color: string }> = {
-  PENDING: { label: 'Pendiente', color: 'bg-yellow-100 text-yellow-800' },
-  ACCEPTED: { label: 'Aceptada', color: 'bg-blue-100 text-blue-800' },
-  REJECTED: { label: 'Rechazada', color: 'bg-red-100 text-red-800' },
-  IN_PROGRESS: { label: 'En progreso', color: 'bg-purple-100 text-purple-800' },
-  COMPLETED: { label: 'Completada', color: 'bg-green-100 text-green-800' },
-  CANCELLED: { label: 'Cancelada', color: 'bg-gray-100 text-gray-800' },
+  PENDING: { label: 'Pendiente', color: 'bg-signal text-ink' },
+  ACCEPTED: { label: 'Aceptada', color: 'bg-blue-600 text-white' },
+  REJECTED: { label: 'Rechazada', color: 'bg-red-600 text-white' },
+  IN_PROGRESS: { label: 'En progreso', color: 'bg-purple-300 text-ink' },
+  COMPLETED: { label: 'Completada', color: 'bg-green-300 text-ink' },
+  CANCELLED: { label: 'Cancelada', color: 'bg-white text-ink' },
 };
 
 export const getInitials = (name: string) =>

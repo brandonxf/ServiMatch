@@ -57,14 +57,14 @@ export default function WorkerProfilePage() {
   };
 
   if (loading) return <div className="flex items-center justify-center py-32"><Spinner size={36} /></div>;
-  if (!worker) return <div className="text-center py-32 text-gray-500">Trabajador no encontrado</div>;
+  if (!worker) return <div className="text-center py-32 text-ink/70">Trabajador no encontrado</div>;
 
   const name = worker.user?.fullName ?? 'Trabajador';
   const services = worker.workerServices ?? [];
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
-      <Link href="/search" className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700 mb-6">
+      <Link href="/search" className="inline-flex items-center gap-1.5 text-sm text-ink/70 hover:text-ink mb-6">
         <ArrowLeft size={15} /> Volver a resultados
       </Link>
 
@@ -76,41 +76,41 @@ export default function WorkerProfilePage() {
               <div className="relative inline-block mb-3">
                 <Avatar src={worker.user?.avatarUrl} name={name} size={80} />
                 {worker.isAvailable && (
-                  <span className="absolute bottom-0.5 right-0.5 w-4 h-4 bg-green-400 rounded-full border-2 border-white" />
+                  <span className="absolute bottom-0.5 right-0.5 w-4 h-4 bg-green-400 border-2 border-ink" />
                 )}
               </div>
-              <h1 className="font-extrabold text-gray-900 text-lg">{name}</h1>
+              <h1 className="font-bold text-ink text-lg">{name}</h1>
               {worker.user?.isVerified && (
-                <span className="text-xs text-blue-600 font-semibold flex items-center justify-center gap-1 mt-0.5">
+                <span className="text-xs text-blue-700 font-semibold flex items-center justify-center gap-1 mt-0.5">
                   <CheckCircle size={12} /> Verificado
                 </span>
               )}
               {worker.city && (
-                <p className="text-sm text-gray-500 flex items-center justify-center gap-1 mt-1">
+                <p className="text-sm text-ink/70 flex items-center justify-center gap-1 mt-1">
                   <MapPin size={12} /> {worker.city}
                 </p>
               )}
             </div>
 
-            <div className="grid grid-cols-3 gap-2 mt-4 pt-4 border-t border-gray-100 text-center">
+            <div className="grid grid-cols-3 gap-2 mt-4 pt-4 border-t border-ink text-center">
               <div>
-                <p className="font-extrabold text-gray-900">{Number(worker.averageRating).toFixed(1)}</p>
-                <p className="text-xs text-gray-400">Rating</p>
+                <p className="font-bold text-ink">{Number(worker.averageRating).toFixed(1)}</p>
+                <p className="text-xs text-ink/60">Rating</p>
               </div>
               <div>
-                <p className="font-extrabold text-gray-900">{worker.reviewCount}</p>
-                <p className="text-xs text-gray-400">Reseñas</p>
+                <p className="font-bold text-ink">{worker.reviewCount}</p>
+                <p className="text-xs text-ink/60">Reseñas</p>
               </div>
               <div>
-                <p className="font-extrabold text-gray-900">{worker.jobsCompleted}</p>
-                <p className="text-xs text-gray-400">Trabajos</p>
+                <p className="font-bold text-ink">{worker.jobsCompleted}</p>
+                <p className="text-xs text-ink/60">Trabajos</p>
               </div>
             </div>
 
             {worker.basePrice && (
-              <div className="mt-4 pt-4 border-t border-gray-100 text-center">
-                <p className="text-2xl font-extrabold text-blue-600">{formatPrice(worker.basePrice)}</p>
-                <p className="text-xs text-gray-400">{priceUnitLabel(worker.priceUnit)}</p>
+              <div className="mt-4 pt-4 border-t border-ink text-center">
+                <p className="text-2xl font-bold text-blue-700">{formatPrice(worker.basePrice)}</p>
+                <p className="text-xs text-ink/60">{priceUnitLabel(worker.priceUnit)}</p>
               </div>
             )}
 
@@ -121,7 +121,7 @@ export default function WorkerProfilePage() {
               </button>
               {worker.user?.phone && (
                 <a href={`https://wa.me/${worker.user.phone.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer"
-                  className="btn-secondary w-full text-green-700 border-green-200 hover:bg-green-50">
+                  className="btn-secondary w-full text-ink border-ink hover:bg-green-300">
                   <MessageSquare size={16} /> WhatsApp
                 </a>
               )}
@@ -131,12 +131,12 @@ export default function WorkerProfilePage() {
           {/* Servicios */}
           {services.length > 0 && (
             <div className="card p-5">
-              <h3 className="font-bold text-gray-900 mb-3 text-sm">Servicios</h3>
+              <h3 className="font-bold text-ink mb-3 text-sm">Servicios</h3>
               <div className="space-y-2">
                 {services.map(s => (
                   <div key={s.id} className="flex items-center justify-between">
-                    <span className="text-sm text-gray-700">{s.category.name}</span>
-                    {s.customPrice && <span className="text-sm font-semibold text-blue-600">{formatPrice(s.customPrice)}</span>}
+                    <span className="text-sm text-ink">{s.category.name}</span>
+                    {s.customPrice && <span className="text-sm font-semibold text-blue-700">{formatPrice(s.customPrice)}</span>}
                   </div>
                 ))}
               </div>
@@ -148,10 +148,10 @@ export default function WorkerProfilePage() {
         <div className="md:col-span-2 space-y-6">
           {worker.bio && (
             <div className="card p-5">
-              <h2 className="font-bold text-gray-900 mb-2">Sobre mí</h2>
-              <p className="text-gray-600 text-sm leading-relaxed">{worker.bio}</p>
+              <h2 className="font-bold text-ink mb-2">Sobre mí</h2>
+              <p className="text-ink/70 text-sm leading-relaxed">{worker.bio}</p>
               {worker.yearsExperience && (
-                <p className="text-sm text-gray-500 mt-3 flex items-center gap-1.5">
+                <p className="text-sm text-ink/70 mt-3 flex items-center gap-1.5">
                   <Briefcase size={14} /> {worker.yearsExperience} años de experiencia
                 </p>
               )}
@@ -160,23 +160,23 @@ export default function WorkerProfilePage() {
 
           {/* Reseñas */}
           <div className="card p-5">
-            <h2 className="font-bold text-gray-900 mb-4">Reseñas ({reviews.length})</h2>
+            <h2 className="font-bold text-ink mb-4">Reseñas ({reviews.length})</h2>
             {reviews.length === 0 ? (
-              <p className="text-gray-400 text-sm">Sin reseñas aún</p>
+              <p className="text-ink/60 text-sm">Sin reseñas aún</p>
             ) : (
               <div className="space-y-4">
                 {reviews.map((r: any) => (
-                  <div key={r.id} className="border-b border-gray-100 last:border-0 pb-4 last:pb-0">
+                  <div key={r.id} className="border-b border-ink last:border-0 pb-4 last:pb-0">
                     <div className="flex items-center gap-2 mb-1.5">
                       <Avatar src={r.reviewer?.avatarUrl} name={r.reviewer?.fullName ?? 'Usuario'} size={28} />
                       <div>
-                        <p className="text-sm font-semibold text-gray-800">{r.reviewer?.fullName}</p>
+                        <p className="text-sm font-semibold text-ink">{r.reviewer?.fullName}</p>
                         <StarRating rating={r.rating} size={12} />
                       </div>
                     </div>
-                    {r.comment && <p className="text-sm text-gray-600 mt-1">{r.comment}</p>}
+                    {r.comment && <p className="text-sm text-ink/70 mt-1">{r.comment}</p>}
                     {r.workerReply && (
-                      <div className="mt-2 ml-4 pl-3 border-l-2 border-blue-200 text-xs text-gray-500">
+                      <div className="mt-2 ml-4 pl-3 border-l-2 border-ink text-xs text-ink/70">
                         <span className="font-semibold">Respuesta:</span> {r.workerReply}
                       </div>
                     )}
@@ -190,9 +190,9 @@ export default function WorkerProfilePage() {
 
       {/* Modal de solicitud */}
       {showRequestForm && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-ink/60 z-50 flex items-center justify-center p-4">
           <div className="card p-6 w-full max-w-md">
-            <h3 className="font-extrabold text-gray-900 text-lg mb-4">Solicitar servicio a {name.split(' ')[0]}</h3>
+            <h3 className="font-bold text-ink text-lg mb-4">Solicitar servicio a {name.split(' ')[0]}</h3>
             <div className="space-y-3">
               <div>
                 <label className="label">¿Qué necesitas? *</label>

@@ -3,45 +3,54 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
+const link =
+  'inline-flex min-h-11 items-center font-semibold text-paper/80 underline-offset-4 transition-colors hover:text-signal hover:underline focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-2 focus-visible:outline-signal';
+
+const heading = 'mb-3 font-mono text-xs font-bold uppercase tracking-[0.18em] text-signal';
+
 export function Footer() {
   const pathname = usePathname();
-  
+
   if (pathname?.startsWith('/auth')) return null;
 
   return (
-    <footer className="py-12 bg-[#0f172a] text-white">
-      <div className="max-w-6xl mx-auto px-4 grid md:grid-cols-3 gap-10">
-
+    <footer className="border-t-2 border-ink bg-ink text-paper">
+      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-[1.5fr_1fr_1fr] lg:px-8">
         <div>
-          <Link href="/" className="flex items-center gap-1 font-bold text-xl tracking-tight hover:opacity-80 transition-opacity mb-3 inline-flex">
-            <span className="text-white">Servi</span><span className="text-blue-500">Match</span>
+          <Link
+            href="/"
+            className="inline-flex font-display text-3xl font-bold uppercase tracking-tight focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-2 focus-visible:outline-signal"
+          >
+            Servi<span className="ml-1 bg-signal px-1.5 text-ink">Match</span>
           </Link>
-          <p className="text-white/50 text-sm leading-relaxed">
-            Conectando clientes con profesionales en tiempo real.
+          <p className="mt-4 max-w-xs leading-relaxed text-paper/70">
+            Conectamos clientes con profesionales verificados, en tiempo real.
           </p>
         </div>
 
-        <div>
-          <h4 className="font-semibold mb-3">Plataforma</h4>
-          <ul className="text-sm text-white/50 space-y-2">
-            <li><Link href="/search" className="hover:text-blue-400 transition-colors">Buscar servicios</Link></li>
-            <li><Link href="/" className="hover:text-blue-400 transition-colors">Inicio</Link></li>
-            <li><Link href="/auth/register" className="hover:text-blue-400 transition-colors">Registro</Link></li>
+        <nav aria-label="Plataforma">
+          <h2 className={heading}>Plataforma</h2>
+          <ul>
+            <li><Link href="/search" className={link}>Buscar servicios</Link></li>
+            <li><Link href="/" className={link}>Inicio</Link></li>
+            <li><Link href="/auth/register" className={link}>Registro</Link></li>
           </ul>
-        </div>
+        </nav>
 
-        <div>
-          <h4 className="font-semibold mb-3">Legal</h4>
-          <ul className="text-sm text-white/50 space-y-2">
-            <li><Link href="#" className="hover:text-blue-400 transition-colors">Privacidad</Link></li>
-            <li><Link href="#" className="hover:text-blue-400 transition-colors">Términos</Link></li>
+        <nav aria-label="Legal">
+          <h2 className={heading}>Legal</h2>
+          <ul>
+            <li><Link href="#" className={link}>Privacidad</Link></li>
+            <li><Link href="#" className={link}>Términos</Link></li>
           </ul>
-        </div>
-
+        </nav>
       </div>
-      <div className="max-w-6xl mx-auto px-4 mt-8 pt-6 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-4">
-        <p className="text-sm text-white/40">© {new Date().getFullYear()} ServiMatch. Todos los derechos reservados.</p>
-        <p className="text-sm text-white/40">Hecho con ♥ en Colombia</p>
+
+      <div className="border-t-2 border-paper/20">
+        <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-2 px-4 py-5 font-mono text-xs font-bold uppercase tracking-wider text-paper/60 sm:px-6 md:flex-row md:items-center lg:px-8">
+          <p>© {new Date().getFullYear()} ServiMatch. Todos los derechos reservados.</p>
+          <p>Hecho con ♥ en Colombia</p>
+        </div>
       </div>
     </footer>
   );

@@ -87,7 +87,7 @@ export default function ChatPage() {
     clearTimeout(typingRef.current);
   };
 
-  if (loading) return <div className="flex items-center justify-center min-h-screen"><Spinner size={36} /></div>;
+  if (loading) return <div className="flex items-center justify-center h-full min-h-[50vh]"><Spinner size={36} /></div>;
 
   const otherUser = request?.client?.id === user?.id ? request?.worker?.user : request?.client;
   const st = statusLabel[request?.status ?? ''];
@@ -95,15 +95,15 @@ export default function ChatPage() {
   return (
     <div className="flex flex-col h-full bg-white relative">
       {/* Header del chat */}
-      <div className="bg-white border-b border-gray-100 px-4 py-3 flex items-center gap-3 flex-shrink-0">
-        <Link href="/chat" className="md:hidden btn-ghost p-1.5 -ml-1.5">
-          <ArrowLeft size={18} />
+      <div className="bg-white border-b border-ink px-4 py-3 flex items-center gap-3 flex-shrink-0">
+        <Link href="/chat" aria-label="Volver a mensajes" className="md:hidden btn-ghost p-1.5 -ml-1.5">
+          <ArrowLeft size={18} aria-hidden="true" />
         </Link>
         <div className="flex items-center gap-2.5 flex-1 min-w-0">
           <Avatar src={otherUser?.avatarUrl} name={otherUser?.fullName ?? '?'} size={38} />
           <div className="min-w-0">
-            <p className="font-bold text-gray-900 text-sm truncate">{otherUser?.fullName}</p>
-            <p className="text-xs text-gray-400 truncate">{request?.title}</p>
+            <p className="font-display font-bold text-ink truncate">{otherUser?.fullName}</p>
+            <p className="text-xs text-ink/60 truncate">{request?.title}</p>
           </div>
         </div>
         {st && <span className={`badge flex-shrink-0 ${st.color}`}>{st.label}</span>}
@@ -112,10 +112,10 @@ export default function ChatPage() {
       {/* Mensajes */}
       <div 
         ref={messagesContainerRef}
-        className="flex-1 overflow-y-auto px-4 py-4 space-y-3 bg-gray-50"
+        className="flex-1 overflow-y-auto px-4 py-4 space-y-3 bg-paper"
       >
         {messages.length === 0 && !loading && (
-          <div className="text-center py-10 text-gray-400 text-sm">
+          <div className="text-center py-10 text-ink/60 text-sm">
             <p>No hay mensajes aún.</p>
             <p className="mt-1">¡Inicia la conversación!</p>
           </div>
@@ -128,12 +128,12 @@ export default function ChatPage() {
               <div className={`max-w-[72%] ${isMe ? 'items-end' : 'items-start'} flex flex-col gap-1`}>
                 <div className={`px-4 py-2.5 rounded-2xl text-sm leading-relaxed ${
                   isMe
-                    ? 'bg-blue-600 text-white rounded-tr-sm'
-                    : 'bg-white text-gray-800 border border-gray-100 rounded-tl-sm shadow-sm'
+                    ? 'bg-ink text-signal font-medium shadow-brutal-sm'
+                    : 'bg-white text-ink border border-ink shadow-brutal-sm'
                 }`}>
                   {msg.content}
                 </div>
-                <span className="text-xs text-gray-400 px-1">{timeAgo(msg.createdAt)}</span>
+                <span className="text-xs text-ink/60 px-1">{timeAgo(msg.createdAt)}</span>
               </div>
             </div>
           );
@@ -141,10 +141,10 @@ export default function ChatPage() {
         {isTyping && (
           <div className="flex gap-2 items-end">
             <Avatar src={otherUser?.avatarUrl} name={otherUser?.fullName ?? '?'} size={28} />
-            <div className="bg-white border border-gray-100 rounded-2xl rounded-tl-sm px-4 py-3 shadow-sm">
+            <div className="bg-white border border-ink rounded-2xl rounded-tl-sm px-4 py-3 shadow-sm">
               <div className="flex gap-1 items-center h-3">
                 {[0, 1, 2].map(i => (
-                  <div key={i} className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: `${i * 0.15}s` }} />
+                  <div key={i} className="w-2 h-2 bg-ink animate-bounce motion-reduce:animate-none" style={{ animationDelay: `${i * 0.15}s` }} />
                 ))}
               </div>
             </div>
@@ -153,19 +153,19 @@ export default function ChatPage() {
       </div>
 
       {/* Input */}
-      <div className="bg-white border-t border-gray-100 px-4 py-3 flex-shrink-0 pb-6 md:pb-3">
+      <div className="bg-white border-t border-ink px-4 py-3 flex-shrink-0 pb-6 md:pb-3">
         <div className="flex items-center gap-2 w-full">
           <input
             value={text}
             onChange={e => { setText(e.target.value); handleTyping(); }}
             onKeyDown={e => e.key === 'Enter' && !e.shiftKey && sendMessage()}
-            placeholder="Escribe un mensaje..."
+            aria-label="Mensaje" placeholder="Escribe un mensaje..."
             className="input flex-1 py-2.5"
           />
           <button
             onClick={sendMessage}
             disabled={!text.trim() || sending}
-            className="btn-primary w-10 h-10 p-0 rounded-xl flex-shrink-0"
+            aria-label="Enviar mensaje" className="btn-primary w-11 h-11 p-0 flex-shrink-0"
           >
             {sending ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
           </button>

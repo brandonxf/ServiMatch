@@ -2,11 +2,11 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useState, type FormEvent } from 'react';
 import {
   Search, Star, Shield, ShieldCheck, Zap, Wrench,
   Droplets, Paintbrush, BadgeCheck, Clock,
-  CheckCircle2, MapPin, ArrowRight
+  CheckCircle2, MapPin, ArrowRight, ArrowUpRight, Hammer,
 } from 'lucide-react';
 
 // ── DATA ─────────────────────────────────────
@@ -22,7 +22,7 @@ const categories = [
   { name: 'Electricidad', slug: 'electricidad', icon: Zap },
   { name: 'Soldadura', slug: 'soldadura', icon: Wrench },
   { name: 'Pintura', slug: 'pintura', icon: Paintbrush },
-  { name: 'Carpintería', slug: 'carpinteria', icon: Wrench },
+  { name: 'Carpintería', slug: 'carpinteria', icon: Hammer },
   { name: 'Cerrajería', slug: 'cerrajeria', icon: Shield },
 ];
 
@@ -30,13 +30,13 @@ const stats = [
   { id: '1', value: '500+', label: 'Profesionales verificados' },
   { id: '2', value: '2,300+', label: 'Solicitudes completadas' },
   { id: '3', value: '4.8/5', label: 'Calificación promedio' },
-  { id: '4', value: '< 15 min', label: 'Tiempo de respuesta' },
+  { id: '4', value: '<15 min', label: 'Tiempo de respuesta' },
 ];
 
 const steps = [
-  { id: '1', title: 'Busca y compara', desc: 'Describe lo que necesitas y revisa perfiles verificados cerca de ti, con tarifas y disponibilidad claras.' },
-  { id: '2', title: 'Contacta con confianza', desc: 'Chatea directamente con el profesional, resuelve dudas y acuerda los detalles antes de contratar.' },
-  { id: '3', title: 'Contrata y califica', desc: 'Da seguimiento a tu solicitud en tiempo real y deja una calificación al finalizar el trabajo.' },
+  { id: '01', title: 'Busca y compara', desc: 'Describe lo que necesitas y revisa perfiles verificados cerca de ti, con tarifas y disponibilidad claras.' },
+  { id: '02', title: 'Contacta directo', desc: 'Chatea con el profesional, resuelve dudas y acuerda los detalles antes de contratar.' },
+  { id: '03', title: 'Contrata y califica', desc: 'Sigue tu solicitud en tiempo real y deja tu calificación al finalizar el trabajo.' },
 ];
 
 const features = [
@@ -47,10 +47,20 @@ const features = [
 ];
 
 const testimonials = [
-  { id: '1', name: 'María Fernández', role: 'Cliente · Bogotá', initials: 'MF', rating: 5, quote: 'Encontré un electricista verificado en menos de 10 minutos. Todo el proceso se sintió seguro, desde el chat hasta el pago.' },
-  { id: '2', name: 'Jorge Ramírez', role: 'Cliente · Medellín', initials: 'JR', rating: 5, quote: 'Me gustó poder ver las calificaciones reales de otros clientes antes de contratar. El plomero llegó puntual y con buena actitud.' },
-  { id: '3', name: 'Carlos Mendoza', role: 'Profesional · Plomero', initials: 'CM', rating: 5, quote: 'Desde que publiqué mi perfil verificado he recibido solicitudes constantes. La plataforma me da visibilidad y confianza frente a los clientes.' },
+  { id: '1', name: 'María Fernández', role: 'Cliente · Bogotá', initials: 'MF', quote: 'Encontré un electricista verificado en menos de 10 minutos. Todo el proceso se sintió seguro, desde el chat hasta el pago.' },
+  { id: '2', name: 'Jorge Ramírez', role: 'Cliente · Medellín', initials: 'JR', quote: 'Me gustó ver las calificaciones reales de otros clientes antes de contratar. El plomero llegó puntual y con buena actitud.' },
+  { id: '3', name: 'Carlos Mendoza', role: 'Profesional · Plomero', initials: 'CM', quote: 'Desde que publiqué mi perfil verificado recibo solicitudes constantes. La plataforma me da visibilidad y confianza.' },
 ];
+
+// ── STYLE TOKENS ─────────────────────────────
+
+const focusRing =
+  'focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-2 focus-visible:outline-blue-600';
+
+const btnBase =
+  `inline-flex min-h-12 items-center justify-center gap-2 border-2 border-ink px-6 py-3 font-display text-sm font-bold uppercase tracking-wide shadow-brutal-sm transition-[transform,box-shadow] duration-100 hover:translate-x-[3px] hover:translate-y-[3px] hover:shadow-none motion-reduce:transition-none ${focusRing}`;
+
+const eyebrow = 'font-mono text-xs font-bold uppercase tracking-[0.18em]';
 
 // ── COMPONENT ───────────────────────────────
 
@@ -59,280 +69,303 @@ export default function HomePage() {
   const [query, setQuery] = useState('');
   const [location, setLocation] = useState('');
 
-  const handleSearch = () => {
+  const handleSearch = (e: FormEvent) => {
+    e.preventDefault();
     const params = new URLSearchParams();
-    if (query) params.set('q', query);
-    if (location) params.set('location', location);
+    if (query.trim()) params.set('q', query.trim());
+    if (location.trim()) params.set('location', location.trim());
     router.push(`/search?${params.toString()}`);
   };
 
   return (
-    <div className="bg-[#0f172a] text-white -mt-16">
+    <div className="bg-paper font-sans text-ink">
       {/* ───────────────── HERO ───────────────── */}
-      <section className="min-h-screen bg-[#0f172a] relative overflow-hidden flex items-center pt-16">
-        {/* grid pattern */}
-        <div
-          className="absolute inset-0 opacity-[0.03]"
-          style={{
-            backgroundImage: 'radial-gradient(circle at 1px 1px, white 1px, transparent 0)',
-            backgroundSize: '32px 32px'
-          }}
-        />
-
-        {/* Subtle brand glow */}
-        <div className="absolute top-[-15%] right-[-5%] w-[700px] h-[700px] bg-blue-600 opacity-20 blur-[160px] rounded-full pointer-events-none" />
-
-        <div className="relative max-w-6xl mx-auto px-4 w-full grid md:grid-cols-[55%_45%] gap-10 items-center">
-
-          {/* LEFT */}
+      <section
+        aria-labelledby="hero-title"
+        className="border-b-2 border-ink"
+        style={{
+          backgroundImage:
+            'linear-gradient(#0a0a0a12 1px, transparent 1px), linear-gradient(90deg, #0a0a0a12 1px, transparent 1px)',
+          backgroundSize: '48px 48px',
+        }}
+      >
+        <div className="mx-auto grid max-w-7xl items-center gap-12 px-4 py-14 sm:px-6 md:py-20 lg:grid-cols-[1.25fr_1fr] lg:px-8">
           <div>
-            <div className="inline-flex items-center gap-2 bg-white/[0.06] border border-white/[0.1] rounded-full px-4 py-1.5 mb-6">
-              <ShieldCheck size={14} className="text-blue-400" />
-              <span className="text-xs font-medium text-white/70">Profesionales verificados por ServiMatch</span>
-            </div>
+            <p className={`${eyebrow} mb-6 inline-block border-2 border-ink bg-signal px-3 py-1.5`}>
+              Profesionales verificados · Colombia
+            </p>
 
-            <h1 className="text-5xl md:text-6xl font-bold leading-tight mb-6">
-              Encuentra el profesional<br />
-              <span className="text-white/70">que necesitas, con confianza</span>
+            <h1
+              id="hero-title"
+              className="font-display text-[clamp(2.5rem,1rem+7vw,6rem)] font-bold uppercase leading-[0.95] tracking-tight text-balance"
+            >
+              El profesional que necesitas,{' '}
+              <span className="inline-block bg-ink px-2 text-signal">sin adivinar.</span>
             </h1>
 
-            <p className="text-white/50 text-base mb-8 max-w-md">
-              Conectamos clientes con profesionales con identidad verificada, calificaciones reales y respuesta rápida.
+            <p className="mt-6 max-w-xl text-lg leading-relaxed text-ink/80 text-pretty">
+              Plomeros, electricistas, soldadores y más. Identidad verificada, calificaciones reales y respuesta en minutos.
             </p>
 
             {/* SEARCH */}
-            <div className="flex flex-col sm:flex-row gap-2 bg-white/[0.05] border border-white/[0.1] rounded-2xl p-2">
-              <div className="flex items-center gap-2 flex-1 px-4 py-3">
-                <Search size={16} className="text-white/40" />
-                <input
-                  type="text"
-                  placeholder="¿Qué servicio necesitas?"
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  className="bg-transparent outline-none w-full text-sm placeholder-white/40"
-                />
+            <form
+              onSubmit={handleSearch}
+              role="search"
+              aria-label="Buscar profesionales"
+              className="mt-10 border-2 border-ink bg-white shadow-brutal"
+            >
+              <div className="grid sm:grid-cols-2">
+                <div className="border-b-2 border-ink p-4 sm:border-b-0 sm:border-r-2">
+                  <label htmlFor="q" className={`${eyebrow} mb-1 flex items-center gap-2`}>
+                    <Search size={14} aria-hidden="true" /> ¿Qué necesitas?
+                  </label>
+                  <input
+                    id="q"
+                    type="text"
+                    enterKeyHint="search"
+                    placeholder="Ej: plomero, electricista…"
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    className={`min-h-11 w-full bg-transparent text-base font-medium placeholder:text-ink/50 ${focusRing}`}
+                  />
+                </div>
+                <div className="p-4">
+                  <label htmlFor="location" className={`${eyebrow} mb-1 flex items-center gap-2`}>
+                    <MapPin size={14} aria-hidden="true" /> ¿Dónde?
+                  </label>
+                  <input
+                    id="location"
+                    type="text"
+                    autoComplete="address-level2"
+                    enterKeyHint="search"
+                    placeholder="Ej: Bogotá, Medellín…"
+                    value={location}
+                    onChange={(e) => setLocation(e.target.value)}
+                    className={`min-h-11 w-full bg-transparent text-base font-medium placeholder:text-ink/50 ${focusRing}`}
+                  />
+                </div>
               </div>
-
-              <div className="flex items-center gap-2 flex-1 px-4 py-3 border-t sm:border-t-0 sm:border-l border-white/10">
-                <MapPin size={16} className="text-white/40" />
-                <input
-                  type="text"
-                  placeholder="Tu ubicación"
-                  value={location}
-                  onChange={(e) => setLocation(e.target.value)}
-                  className="bg-transparent outline-none w-full text-sm placeholder-white/40"
-                />
-              </div>
-
               <button
-                onClick={handleSearch}
-                className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-xl transition active:scale-95"
+                type="submit"
+                className={`flex min-h-14 w-full items-center justify-center gap-2 border-t-2 border-ink bg-blue-600 px-6 py-4 font-display text-base font-bold uppercase tracking-wide text-white transition-colors hover:bg-ink ${focusRing}`}
               >
-                Buscar
+                Buscar profesionales <ArrowRight size={18} aria-hidden="true" />
               </button>
-            </div>
+            </form>
 
-            {/* TRUST ROW */}
-            <div className="flex flex-wrap gap-x-6 gap-y-2 mt-6">
-              <div className="flex items-center gap-1.5 text-white/50 text-xs">
-                <ShieldCheck size={14} className="text-blue-400" /> Identidad verificada
-              </div>
-              <div className="flex items-center gap-1.5 text-white/50 text-xs">
-                <Star size={14} className="text-yellow-400 fill-yellow-400" /> 4.8/5 calificación promedio
-              </div>
-              <div className="flex items-center gap-1.5 text-white/50 text-xs">
-                <Clock size={14} className="text-blue-400" /> Respuesta en minutos
-              </div>
+            {/* Quick categories */}
+            <div className="mt-6 flex flex-wrap items-center gap-2">
+              <span className={`${eyebrow} mr-1`}>Populares:</span>
+              {categories.slice(0, 4).map((c) => (
+                <Link
+                  key={c.slug}
+                  href={`/search?category=${c.slug}`}
+                  className={`inline-flex min-h-11 items-center border-2 border-ink bg-white px-3 text-sm font-semibold transition-colors hover:bg-signal ${focusRing}`}
+                >
+                  {c.name}
+                </Link>
+              ))}
             </div>
           </div>
 
-          {/* RIGHT */}
-          <div className="hidden md:flex flex-col gap-3">
-            {workers.map((w, i) => (
-              <div
-                key={w.id}
-                className="bg-white/[0.04] border border-white/[0.08] rounded-2xl p-4 flex items-center gap-4 hover:border-blue-400/40 transition-all"
-                style={{ transform: `translateX(${i * 8}px)` }}
-              >
-                <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-sm font-semibold">
-                  {w.initials}
-                </div>
-
-                <div className="flex-1">
-                  <div className="flex items-center gap-2">
-                    <p className="text-sm font-semibold">{w.name}</p>
-                    <BadgeCheck size={14} className="text-blue-400" />
+          {/* Sample profiles */}
+          <div className="hidden lg:block" aria-label="Ejemplo de perfiles">
+            <p className={`${eyebrow} mb-3 flex items-center justify-between`}>
+              <span>Así se ven los perfiles</span>
+              <span className="text-ink/60">Ejemplo</span>
+            </p>
+            <ul className="space-y-4">
+              {workers.map((w) => (
+                <li
+                  key={w.id}
+                  className="flex items-center gap-4 border-2 border-ink bg-white p-4 shadow-brutal-sm"
+                >
+                  <div
+                    aria-hidden="true"
+                    className="flex size-12 shrink-0 items-center justify-center border-2 border-ink bg-signal font-display text-base font-bold"
+                  >
+                    {w.initials}
                   </div>
-                  <p className="text-white/40 text-xs">{w.trade}</p>
-                  <p className="text-white/25 text-[11px] mt-1">
-                    Disponible hoy · Responde en ~10 min
-                  </p>
-                </div>
-
-                <div className="text-right">
-                  <p className="text-sm font-semibold">{w.rate}/hr</p>
-                  <div className="flex items-center justify-end gap-1">
-                    <Star size={10} className="text-yellow-400 fill-yellow-400" />
-                    <span className="text-xs text-white/50">{w.rating}</span>
+                  <div className="min-w-0 flex-1">
+                    <p className="flex items-center gap-1.5 font-display text-base font-bold">
+                      <span className="truncate">{w.name}</span>
+                      <BadgeCheck size={16} className="shrink-0 text-blue-600" aria-label="Verificado" />
+                    </p>
+                    <p className="text-sm text-ink/70">{w.trade}</p>
+                    <p className="mt-1 font-mono text-[11px] font-bold uppercase tracking-wider text-ink/60">
+                      Disponible hoy · ~10 min
+                    </p>
                   </div>
-                </div>
-              </div>
-            ))}
+                  <div className="text-right">
+                    <p className="font-display text-base font-bold">{w.rate}<span className="text-xs font-medium text-ink/60">/hr</span></p>
+                    <p className="flex items-center justify-end gap-1 text-sm font-semibold">
+                      <Star size={12} className="fill-ink text-ink" aria-hidden="true" />
+                      {w.rating}
+                    </p>
+                  </div>
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
       </section>
 
       {/* ───────────────── STATS ───────────────── */}
-      <section className="bg-white border-b border-gray-100 py-10">
-        <div className="max-w-6xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-8">
-          {stats.map((s) => (
-            <div key={s.id} className="text-center">
-              <p className="text-2xl md:text-3xl font-bold text-[#0f172a]">{s.value}</p>
-              <p className="text-xs md:text-sm text-gray-500 mt-1">{s.label}</p>
+      <section aria-label="ServiMatch en cifras" className="border-b-2 border-ink bg-signal">
+        <dl className="mx-auto grid max-w-7xl grid-cols-2 lg:grid-cols-4">
+          {stats.map((s, i) => (
+            <div
+              key={s.id}
+              className={`border-ink px-4 py-8 sm:px-6 lg:px-8 ${i % 2 === 0 ? 'border-r-2' : ''} ${i < 2 ? 'border-b-2 lg:border-b-0' : ''} ${i === 1 ? 'lg:border-r-2' : ''} ${i === 2 ? 'lg:border-r-2' : ''}`}
+            >
+              <dd className="font-display text-[clamp(2rem,1rem+3vw,3.5rem)] font-bold leading-none">{s.value}</dd>
+              <dt className={`${eyebrow} mt-2`}>{s.label}</dt>
             </div>
           ))}
-        </div>
+        </dl>
       </section>
 
       {/* ───────────────── CATEGORIES ───────────────── */}
-      <section className="py-24 bg-white">
-        <div className="max-w-6xl mx-auto px-4 text-center mb-12">
-          <h2 className="text-3xl font-bold mb-3 text-[#0f172a]">Servicios disponibles</h2>
-          <p className="text-gray-500">Profesionales listos para ayudarte</p>
-        </div>
+      <section aria-labelledby="cat-title" className="border-b-2 border-ink py-20">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <p className={`${eyebrow} mb-3`}>01 / Servicios</p>
+          <h2 id="cat-title" className="max-w-3xl font-display text-[clamp(2rem,1rem+4vw,3.75rem)] font-bold uppercase leading-none tracking-tight text-balance">
+            ¿Qué necesitas arreglar hoy?
+          </h2>
 
-        <div className="grid grid-cols-3 md:grid-cols-6 gap-6 max-w-6xl mx-auto px-4">
-          {categories.map((cat) => (
-            <Link
-              key={cat.slug}
-              href={`/search?category=${cat.slug}`}
-              className="bg-white border border-gray-200 rounded-xl p-4 flex flex-col items-center gap-2 hover:border-blue-600 hover:shadow-lg transition"
-            >
-              <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center">
-                <cat.icon size={18} className="text-blue-600" />
-              </div>
-              <span className="text-xs text-[#0f172a]">{cat.name}</span>
-            </Link>
-          ))}
+          <ul className="mt-12 grid grid-cols-2 border-l-2 border-t-2 border-ink md:grid-cols-3">
+            {categories.map((cat, i) => (
+              <li key={cat.slug} className="border-b-2 border-r-2 border-ink">
+                <Link
+                  href={`/search?category=${cat.slug}`}
+                  className={`group flex h-full min-h-44 flex-col justify-between bg-white p-5 transition-colors hover:bg-ink hover:text-signal motion-reduce:transition-none ${focusRing} focus-visible:-outline-offset-4`}
+                >
+                  <div className="flex items-start justify-between">
+                    <span className="font-mono text-xs font-bold">{String(i + 1).padStart(2, '0')}</span>
+                    <ArrowUpRight size={22} aria-hidden="true" className="transition-transform group-hover:translate-x-1 group-hover:-translate-y-1 motion-reduce:transform-none" />
+                  </div>
+                  <div>
+                    <cat.icon size={32} aria-hidden="true" strokeWidth={2.25} className="mb-3" />
+                    <span className="font-display text-xl font-bold uppercase sm:text-2xl">{cat.name}</span>
+                  </div>
+                </Link>
+              </li>
+            ))}
+          </ul>
         </div>
       </section>
 
       {/* ───────────────── CÓMO FUNCIONA ───────────────── */}
-      <section className="py-24 bg-gray-50">
-        <div className="max-w-6xl mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold mb-3 text-[#0f172a]">Así de simple</h2>
-            <p className="text-gray-500">Tres pasos, sin fricción, con respaldo en cada uno</p>
-          </div>
+      <section aria-labelledby="steps-title" className="border-b-2 border-ink bg-white py-20">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <p className={`${eyebrow} mb-3`}>02 / Proceso</p>
+          <h2 id="steps-title" className="max-w-3xl font-display text-[clamp(2rem,1rem+4vw,3.75rem)] font-bold uppercase leading-none tracking-tight text-balance">
+            Tres pasos. Cero fricción.
+          </h2>
 
-          <div className="grid md:grid-cols-3 gap-10">
+          <ol className="mt-12 grid gap-6 md:grid-cols-3">
             {steps.map((s) => (
-              <div key={s.id} className="text-center md:text-left">
-                <div className="w-10 h-10 bg-[#0f172a] text-white rounded-full flex items-center justify-center font-bold mb-4 mx-auto md:mx-0">
+              <li key={s.id} className="border-2 border-ink bg-paper p-6 shadow-brutal">
+                <span className="font-display text-7xl font-bold leading-none text-signal [-webkit-text-stroke:2px_#0a0a0a]" aria-hidden="true">
                   {s.id}
-                </div>
-                <h3 className="font-semibold text-[#0f172a] mb-2">{s.title}</h3>
-                <p className="text-sm text-gray-500 leading-relaxed">{s.desc}</p>
-              </div>
+                </span>
+                <h3 className="mt-4 font-display text-2xl font-bold uppercase">{s.title}</h3>
+                <p className="mt-3 leading-relaxed text-ink/80 text-pretty">{s.desc}</p>
+              </li>
             ))}
-          </div>
+          </ol>
         </div>
       </section>
 
       {/* ───────────────── CONFIANZA ───────────────── */}
-      <section className="py-24 bg-[#0f172a]">
-        <div className="max-w-6xl mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold mb-3">
-              Profesionales verificados, resultados confiables
-            </h2>
-            <p className="text-white/50">
-              Cada perfil pasa por un proceso de validación antes de estar disponible
-            </p>
-          </div>
+      <section aria-labelledby="trust-title" className="border-b-2 border-ink bg-ink py-20 text-paper">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <p className={`${eyebrow} mb-3 text-signal`}>03 / Confianza</p>
+          <h2 id="trust-title" className="max-w-3xl font-display text-[clamp(2rem,1rem+4vw,3.75rem)] font-bold uppercase leading-none tracking-tight text-balance">
+            Verificados. Medibles. Confiables.
+          </h2>
+          <p className="mt-4 max-w-xl text-lg text-paper/75">
+            Cada perfil pasa por un proceso de validación antes de estar disponible.
+          </p>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <ul className="mt-12 grid border-l-2 border-t-2 border-paper/60 sm:grid-cols-2 lg:grid-cols-4">
             {features.map((f) => (
-              <div key={f.id} className="bg-white/[0.04] border border-white/[0.08] rounded-2xl p-6 hover:border-blue-400/40 transition">
-                <div className="w-10 h-10 bg-blue-600/15 rounded-lg flex items-center justify-center mb-4">
-                  <f.icon size={18} className="text-blue-400" />
-                </div>
-                <p className="text-sm font-semibold mb-2 text-white">{f.title}</p>
-                <p className="text-sm text-white/50 leading-relaxed">
-                  {f.desc}
-                </p>
-              </div>
+              <li key={f.id} className="border-b-2 border-r-2 border-paper/60 p-6">
+                <f.icon size={28} aria-hidden="true" className="mb-5 text-signal" />
+                <h3 className="font-display text-xl font-bold uppercase">{f.title}</h3>
+                <p className="mt-2 leading-relaxed text-paper/75">{f.desc}</p>
+              </li>
             ))}
-          </div>
+          </ul>
         </div>
       </section>
 
       {/* ───────────────── TESTIMONIOS ───────────────── */}
-      <section className="py-24 bg-white">
-        <div className="max-w-6xl mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold mb-3 text-[#0f172a]">Lo que dicen quienes ya confiaron en ServiMatch</h2>
-            <p className="text-gray-500">Clientes y profesionales que usan la plataforma a diario</p>
-          </div>
+      <section aria-labelledby="reviews-title" className="border-b-2 border-ink py-20">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <p className={`${eyebrow} mb-3`}>04 / Opiniones</p>
+          <h2 id="reviews-title" className="max-w-3xl font-display text-[clamp(2rem,1rem+4vw,3.75rem)] font-bold uppercase leading-none tracking-tight text-balance">
+            Lo dicen quienes ya lo usaron.
+          </h2>
 
-          <div className="grid md:grid-cols-3 gap-6">
+          <ul className="mt-12 grid gap-6 md:grid-cols-3">
             {testimonials.map((t) => (
-              <div key={t.id} className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm flex flex-col">
-                <div className="flex items-center gap-1 mb-4">
-                  {Array.from({ length: t.rating }).map((_, i) => (
-                    <Star key={i} size={14} className="text-yellow-400 fill-yellow-400" />
-                  ))}
-                </div>
-                <p className="text-sm text-gray-600 leading-relaxed mb-6 flex-1">
-                  &ldquo;{t.quote}&rdquo;
-                </p>
-                <div className="flex items-center gap-3 pt-4 border-t border-gray-100">
-                  <div className="w-9 h-9 bg-[#0f172a] text-white rounded-full flex items-center justify-center text-xs font-semibold">
-                    {t.initials}
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold text-[#0f172a]">{t.name}</p>
-                    <p className="text-xs text-gray-500">{t.role}</p>
-                  </div>
-                </div>
-              </div>
+              <li key={t.id}>
+                <figure className="flex h-full flex-col border-2 border-ink bg-white p-6 shadow-brutal">
+                  <p className="flex items-center gap-1" role="img" aria-label="5 de 5 estrellas">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <Star key={i} size={18} aria-hidden="true" className="fill-signal text-ink" strokeWidth={2} />
+                    ))}
+                  </p>
+                  <blockquote className="mt-4 flex-1 text-lg leading-relaxed text-pretty">
+                    &ldquo;{t.quote}&rdquo;
+                  </blockquote>
+                  <figcaption className="mt-6 flex items-center gap-3 border-t-2 border-ink pt-4">
+                    <span
+                      aria-hidden="true"
+                      className="flex size-10 items-center justify-center border-2 border-ink bg-signal font-display text-sm font-bold"
+                    >
+                      {t.initials}
+                    </span>
+                    <span>
+                      <span className="block font-display font-bold">{t.name}</span>
+                      <span className="block font-mono text-xs font-bold uppercase tracking-wider text-ink/65">{t.role}</span>
+                    </span>
+                  </figcaption>
+                </figure>
+              </li>
             ))}
-          </div>
+          </ul>
         </div>
       </section>
 
       {/* ───────────────── CTA ───────────────── */}
-      <section className="py-24 bg-gray-50">
-        <div className="max-w-4xl mx-auto px-4">
-          <div className="bg-[#0f172a] rounded-3xl p-10 md:p-12 grid md:grid-cols-[1fr_auto] gap-8 items-center">
-            <div>
-              <h2 className="text-3xl font-bold mb-4 text-white">
-                ¿Eres trabajador independiente?
-              </h2>
+      <section aria-labelledby="cta-title" className="bg-signal py-20">
+        <div className="mx-auto grid max-w-7xl gap-10 px-4 sm:px-6 lg:grid-cols-[1.4fr_1fr] lg:items-center lg:px-8">
+          <div>
+            <p className={`${eyebrow} mb-3`}>¿Trabajas por tu cuenta?</p>
+            <h2 id="cta-title" className="font-display text-[clamp(2.25rem,1rem+5vw,4.5rem)] font-bold uppercase leading-[0.95] tracking-tight text-balance">
+              Consigue clientes sin pagar por publicar.
+            </h2>
+            <ul className="mt-6 space-y-2">
+              {['Sin costo de publicación', 'Pagos protegidos', 'Soporte permanente'].map((item) => (
+                <li key={item} className="flex items-center gap-2 font-semibold">
+                  <CheckCircle2 size={20} aria-hidden="true" className="shrink-0" /> {item}
+                </li>
+              ))}
+            </ul>
+          </div>
 
-              <p className="text-white/60 mb-6 max-w-md">
-                Crea tu perfil verificado, publica tus servicios y empieza a recibir clientes con confianza.
-              </p>
-
-              <ul className="space-y-2">
-                {['Sin costo de publicación', 'Pagos protegidos', 'Soporte permanente'].map((item) => (
-                  <li key={item} className="flex items-center gap-2 text-sm text-white/70">
-                    <CheckCircle2 size={15} className="text-blue-400 shrink-0" /> {item}
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <Link
-              href="/auth/register?role=WORKER"
-              className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-xl font-semibold transition inline-flex items-center justify-center gap-2 whitespace-nowrap"
-            >
-              Crear perfil <ArrowRight size={16} />
+          <div className="flex flex-col gap-4">
+            <Link href="/auth/register?role=WORKER" className={`${btnBase} bg-ink text-signal hover:bg-ink`}>
+              Crear perfil profesional <ArrowRight size={18} aria-hidden="true" />
+            </Link>
+            <Link href="/search" className={`${btnBase} bg-white text-ink hover:bg-white`}>
+              Quiero contratar
             </Link>
           </div>
         </div>
       </section>
-
     </div>
   );
 }

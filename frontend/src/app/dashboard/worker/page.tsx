@@ -74,8 +74,8 @@ export default function WorkerDashboardPage() {
 
   if (!profile) return (
     <div className="max-w-lg mx-auto px-4 py-16 text-center">
-      <h2 className="text-xl font-bold text-gray-900 mb-2">No tienes perfil de trabajador</h2>
-      <p className="text-gray-500 mb-6">Crea tu perfil profesional para empezar a recibir clientes.</p>
+      <h2 className="text-xl font-bold text-ink mb-2">No tienes perfil de trabajador</h2>
+      <p className="text-ink/70 mb-6">Crea tu perfil profesional para empezar a recibir clientes.</p>
       <Link href="/dashboard/worker/setup" className="btn-primary inline-flex px-6 py-3">Crear perfil</Link>
     </div>
   );
@@ -85,7 +85,7 @@ export default function WorkerDashboardPage() {
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
       <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
-        <h1 className="text-2xl font-extrabold text-gray-900">Mi perfil profesional</h1>
+        <h1 className="font-display text-3xl font-bold uppercase tracking-tight text-ink">Mi perfil profesional</h1>
         <Link href="/dashboard/worker/setup" className="btn-secondary text-sm py-2 px-4">
           <Edit2 size={14} /> Editar perfil
         </Link>
@@ -98,44 +98,44 @@ export default function WorkerDashboardPage() {
             <div className="flex items-center gap-3 mb-4">
               <Avatar src={user?.avatarUrl} name={name} size={52} />
               <div>
-                <h2 className="font-bold text-gray-900">{name}</h2>
-                {profile.city && <p className="text-xs text-gray-500 flex items-center gap-1"><MapPin size={11} />{profile.city}</p>}
+                <h2 className="font-bold text-ink">{name}</h2>
+                {profile.city && <p className="text-xs text-ink/70 flex items-center gap-1"><MapPin size={11} />{profile.city}</p>}
               </div>
             </div>
 
             {/* Toggle disponibilidad */}
             <button onClick={toggleAvailability} disabled={toggling}
               className={`w-full flex items-center justify-between px-4 py-3 rounded-xl border-2 transition-all ${
-                profile.isAvailable ? 'border-green-300 bg-green-50' : 'border-gray-200 bg-gray-50'
+                profile.isAvailable ? 'border-ink bg-green-300' : 'border-ink bg-paper'
               }`}>
-              <span className={`text-sm font-semibold ${profile.isAvailable ? 'text-green-700' : 'text-gray-500'}`}>
+              <span className={`text-sm font-semibold ${profile.isAvailable ? 'text-ink' : 'text-ink/70'}`}>
                 {profile.isAvailable ? '✓ Disponible ahora' : 'No disponible'}
               </span>
               {toggling ? <Spinner size={16} /> : profile.isAvailable
-                ? <ToggleRight size={24} className="text-green-600" />
-                : <ToggleLeft size={24} className="text-gray-400" />}
+                ? <ToggleRight size={24} className="text-ink" />
+                : <ToggleLeft size={24} className="text-ink/60" />}
             </button>
 
-            <div className="grid grid-cols-3 gap-2 mt-4 pt-4 border-t border-gray-100 text-center">
+            <div className="grid grid-cols-3 gap-2 mt-4 pt-4 border-t border-ink text-center">
               <div>
-                <p className="font-extrabold text-gray-900">{Number(profile.averageRating).toFixed(1)}</p>
+                <p className="font-bold text-ink">{Number(profile.averageRating).toFixed(1)}</p>
                 <StarRating rating={Number(profile.averageRating)} size={10} />
               </div>
               <div>
-                <p className="font-extrabold text-gray-900">{profile.reviewCount}</p>
-                <p className="text-xs text-gray-400">Reseñas</p>
+                <p className="font-bold text-ink">{profile.reviewCount}</p>
+                <p className="text-xs text-ink/60">Reseñas</p>
               </div>
               <div>
-                <p className="font-extrabold text-gray-900">{profile.jobsCompleted}</p>
-                <p className="text-xs text-gray-400">Trabajos</p>
+                <p className="font-bold text-ink">{profile.jobsCompleted}</p>
+                <p className="text-xs text-ink/60">Trabajos</p>
               </div>
             </div>
 
             {profile.basePrice && (
-              <div className="mt-4 pt-4 border-t border-gray-100">
-                <p className="text-sm text-gray-500 mb-1">Precio base</p>
-                <p className="text-xl font-extrabold text-blue-600">{formatPrice(profile.basePrice)}
-                  <span className="text-sm font-normal text-gray-400"> {priceUnitLabel(profile.priceUnit)}</span>
+              <div className="mt-4 pt-4 border-t border-ink">
+                <p className="text-sm text-ink/70 mb-1">Precio base</p>
+                <p className="text-xl font-bold text-blue-700">{formatPrice(profile.basePrice)}
+                  <span className="text-sm font-normal text-ink/60"> {priceUnitLabel(profile.priceUnit)}</span>
                 </p>
               </div>
             )}
@@ -143,8 +143,8 @@ export default function WorkerDashboardPage() {
 
           {profile.bio && (
             <div className="card p-4">
-              <h3 className="font-bold text-gray-800 text-sm mb-2">Descripción</h3>
-              <p className="text-sm text-gray-600 leading-relaxed">{profile.bio}</p>
+              <h3 className="font-bold text-ink text-sm mb-2">Descripción</h3>
+              <p className="text-sm text-ink/70 leading-relaxed">{profile.bio}</p>
             </div>
           )}
         </div>
@@ -153,25 +153,25 @@ export default function WorkerDashboardPage() {
         <div className="md:col-span-2 space-y-4">
           <div className="card p-5">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="font-bold text-gray-900">Servicios que ofrezco</h3>
+              <h3 className="font-bold text-ink">Servicios que ofrezco</h3>
               <button onClick={() => setShowAddService(true)} className="btn-primary text-xs py-1.5 px-3">
                 <Plus size={13} /> Agregar
               </button>
             </div>
 
             {!profile.workerServices?.length ? (
-              <p className="text-sm text-gray-400 text-center py-4">Sin servicios aún. Agrega los servicios que ofreces.</p>
+              <p className="text-sm text-ink/60 text-center py-4">Sin servicios aún. Agrega los servicios que ofreces.</p>
             ) : (
               <div className="space-y-3">
                 {profile.workerServices.map(s => (
-                  <div key={s.id} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">
+                  <div key={s.id} className="flex items-center justify-between py-2 border-b border-ink last:border-0">
                     <div>
-                      <p className="font-semibold text-gray-800 text-sm">{s.category.name}</p>
-                      {s.description && <p className="text-xs text-gray-400">{s.description}</p>}
+                      <p className="font-semibold text-ink text-sm">{s.category.name}</p>
+                      {s.description && <p className="text-xs text-ink/60">{s.description}</p>}
                     </div>
                     <div className="flex items-center gap-3">
-                      {s.customPrice && <span className="text-sm font-bold text-blue-600">{formatPrice(s.customPrice)}</span>}
-                      <button onClick={() => removeService(s.id)} className="p-1.5 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+                      {s.customPrice && <span className="text-sm font-bold text-blue-700">{formatPrice(s.customPrice)}</span>}
+                      <button onClick={() => removeService(s.id)} className="p-1.5 text-red-400 hover:text-red-700 hover:bg-red-100 rounded-lg transition-colors">
                         <Trash2 size={14} />
                       </button>
                     </div>
@@ -183,20 +183,20 @@ export default function WorkerDashboardPage() {
 
           {/* Zona de cobertura */}
           <div className="card p-5">
-            <h3 className="font-bold text-gray-900 mb-3">Zona de cobertura</h3>
+            <h3 className="font-bold text-ink mb-3">Zona de cobertura</h3>
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
-                <p className="text-gray-500 text-xs mb-1">Radio</p>
-                <p className="font-semibold text-gray-800">{profile.coverageRadiusKm} km</p>
+                <p className="text-ink/70 text-xs mb-1">Radio</p>
+                <p className="font-semibold text-ink">{profile.coverageRadiusKm} km</p>
               </div>
               <div>
-                <p className="text-gray-500 text-xs mb-1">Ciudad</p>
-                <p className="font-semibold text-gray-800">{profile.city ?? 'No definida'}</p>
+                <p className="text-ink/70 text-xs mb-1">Ciudad</p>
+                <p className="font-semibold text-ink">{profile.city ?? 'No definida'}</p>
               </div>
               {profile.yearsExperience && (
                 <div>
-                  <p className="text-gray-500 text-xs mb-1">Experiencia</p>
-                  <p className="font-semibold text-gray-800">{profile.yearsExperience} años</p>
+                  <p className="text-ink/70 text-xs mb-1">Experiencia</p>
+                  <p className="font-semibold text-ink">{profile.yearsExperience} años</p>
                 </div>
               )}
             </div>
@@ -206,9 +206,9 @@ export default function WorkerDashboardPage() {
 
       {/* Modal agregar servicio */}
       {showAddService && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-ink/60 z-50 flex items-center justify-center p-4">
           <div className="card p-6 w-full max-w-sm">
-            <h3 className="font-bold text-gray-900 mb-4">Agregar servicio</h3>
+            <h3 className="font-bold text-ink mb-4">Agregar servicio</h3>
             <div className="space-y-3">
               <div>
                 <label className="label">Tipo de servicio *</label>
@@ -220,11 +220,11 @@ export default function WorkerDashboardPage() {
                 </select>
               </div>
               <div>
-                <label className="label">Precio (COP) <span className="text-gray-400 font-normal">opcional</span></label>
+                <label className="label">Precio (COP) <span className="text-ink/60 font-normal">opcional</span></label>
                 <input value={newService.customPrice} onChange={e => setNewService(s => ({ ...s, customPrice: e.target.value }))} type="number" placeholder="Ej: 80000" className="input" />
               </div>
               <div>
-                <label className="label">Descripción <span className="text-gray-400 font-normal">opcional</span></label>
+                <label className="label">Descripción <span className="text-ink/60 font-normal">opcional</span></label>
                 <input value={newService.description} onChange={e => setNewService(s => ({ ...s, description: e.target.value }))} placeholder="Ej: Instalaciones residenciales" className="input" />
               </div>
             </div>

@@ -29,17 +29,17 @@ export default function NotificationsPage() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-8">
+    <div className="max-w-3xl mx-auto px-4 sm:px-6 py-10">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-yellow-100 text-yellow-600 rounded-xl flex items-center justify-center">
+          <div aria-hidden="true" className="w-11 h-11 bg-signal border-2 border-ink flex items-center justify-center">
             <Bell size={20} />
           </div>
-          <h1 className="text-2xl font-extrabold text-gray-900">Notificaciones</h1>
+          <h1 className="font-display text-3xl font-bold uppercase tracking-tight">Notificaciones</h1>
         </div>
         {notifications.some(n => !n.isRead) && (
-          <button onClick={handleMarkAllRead} className="btn-ghost text-sm py-1.5 px-3">
-            <Check size={14} /> Marcar todas
+          <button onClick={handleMarkAllRead} className="btn-secondary text-xs">
+            <Check size={14} aria-hidden="true" /> Marcar todas
           </button>
         )}
       </div>
@@ -49,16 +49,19 @@ export default function NotificationsPage() {
       ) : (
         <div className="space-y-2">
           {notifications.map(n => (
-            <div key={n.id} onClick={() => !n.isRead && handleMarkRead(n.id)}
-              className={`card p-4 flex items-start gap-3 cursor-pointer transition-all hover:shadow-md ${!n.isRead ? 'border-blue-200 bg-blue-50/50' : ''}`}>
-              <span className="text-xl flex-shrink-0 mt-0.5">{TYPE_ICONS[n.type] ?? '🔔'}</span>
-              <div className="flex-1 min-w-0">
-                <p className={`text-sm font-semibold ${!n.isRead ? 'text-gray-900' : 'text-gray-700'}`}>{n.title}</p>
-                <p className="text-xs text-gray-500 mt-0.5">{n.body}</p>
-                <p className="text-xs text-gray-400 mt-1">{timeAgo(n.createdAt)}</p>
-              </div>
-              {!n.isRead && <div className="w-2 h-2 bg-blue-600 rounded-full flex-shrink-0 mt-1.5" />}
-            </div>
+            <button
+              type="button"
+              key={n.id}
+              onClick={() => !n.isRead && handleMarkRead(n.id)}
+              className={`card w-full p-4 flex items-start gap-3 text-left transition-[transform,box-shadow] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none motion-reduce:transition-none ${!n.isRead ? 'bg-signal' : ''}`}>
+              <span aria-hidden="true" className="text-xl flex-shrink-0 mt-0.5">{TYPE_ICONS[n.type] ?? '🔔'}</span>
+              <span className="flex-1 min-w-0">
+                <span className="block font-display font-bold">{n.title}</span>
+                <span className="block text-sm mt-0.5">{n.body}</span>
+                <span className="block font-mono text-xs font-bold uppercase tracking-wider text-ink/60 mt-1">{timeAgo(n.createdAt)}</span>
+              </span>
+              {!n.isRead && <span className="badge bg-ink text-signal flex-shrink-0">Nueva</span>}
+            </button>
           ))}
         </div>
       )}

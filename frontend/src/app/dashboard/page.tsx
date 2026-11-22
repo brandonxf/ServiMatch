@@ -33,12 +33,12 @@ export default function DashboardPage() {
   const completed = requests.filter(r => r.status === 'COMPLETED');
 
   const quickLinks = [
-    { href: '/search', icon: <Wrench size={20} />, label: 'Buscar servicios', desc: 'Encuentra profesionales cerca', color: 'bg-blue-100 text-blue-600' },
-    { href: '/dashboard/requests', icon: <Briefcase size={20} />, label: 'Mis solicitudes', desc: `${active.length} activas`, color: 'bg-purple-100 text-purple-600' },
-    { href: '/chat', icon: <MessageSquare size={20} />, label: 'Mensajes', desc: 'Ver conversaciones', color: 'bg-green-100 text-green-600' },
-    { href: '/notifications', icon: <Bell size={20} />, label: 'Notificaciones', desc: 'Ver todas', color: 'bg-yellow-100 text-yellow-600' },
-    ...(user.isWorker ? [{ href: '/dashboard/worker', icon: <Star size={20} />, label: 'Mi perfil profesional', desc: 'Gestionar servicios', color: 'bg-orange-100 text-orange-600' }] : []),
-    { href: '/dashboard/settings', icon: <Settings size={20} />, label: 'Configuración', desc: 'Editar perfil', color: 'bg-gray-100 text-gray-600' },
+    { href: '/search', icon: <Wrench size={20} />, label: 'Buscar servicios', desc: 'Encuentra profesionales cerca', color: 'bg-signal/40 text-blue-700' },
+    { href: '/dashboard/requests', icon: <Briefcase size={20} />, label: 'Mis solicitudes', desc: `${active.length} activas`, color: 'bg-purple-300 text-ink' },
+    { href: '/chat', icon: <MessageSquare size={20} />, label: 'Mensajes', desc: 'Ver conversaciones', color: 'bg-green-300 text-ink' },
+    { href: '/notifications', icon: <Bell size={20} />, label: 'Notificaciones', desc: 'Ver todas', color: 'bg-signal text-ink' },
+    ...(user.isWorker ? [{ href: '/dashboard/worker', icon: <Star size={20} />, label: 'Mi perfil profesional', desc: 'Gestionar servicios', color: 'bg-orange-300 text-ink' }] : []),
+    { href: '/dashboard/settings', icon: <Settings size={20} />, label: 'Configuración', desc: 'Editar perfil', color: 'bg-ink/10 text-ink/70' },
   ];
 
   return (
@@ -47,8 +47,8 @@ export default function DashboardPage() {
       <div className="flex items-center gap-4 mb-8">
         <Avatar src={user.avatarUrl} name={user.fullName} size={56} />
         <div>
-          <h1 className="text-2xl font-extrabold text-gray-900">Hola, {user.fullName.split(' ')[0]} 👋</h1>
-          <p className="text-gray-500 text-sm mt-0.5">{user.email}</p>
+          <h1 className="font-display text-3xl font-bold uppercase tracking-tight text-ink">Hola, {user.fullName.split(' ')[0]}</h1>
+          <p className="text-ink/70 text-sm mt-0.5">{user.email}</p>
           <div className="flex gap-2 mt-1">
             <Badge variant="blue">{user.role === 'WORKER' ? 'Trabajador' : 'Cliente'}</Badge>
             {user.isVerified && <Badge variant="green">Verificado</Badge>}
@@ -59,13 +59,13 @@ export default function DashboardPage() {
       {/* Stats rápidas */}
       <div className="grid grid-cols-3 gap-4 mb-8">
         {[
-          { label: 'Solicitudes activas', value: active.length, color: 'text-blue-600' },
-          { label: 'Trabajos completados', value: completed.length, color: 'text-green-600' },
-          { label: 'Total solicitudes', value: requests.length, color: 'text-gray-700' },
+          { label: 'Solicitudes activas', value: active.length, color: 'text-blue-700' },
+          { label: 'Trabajos completados', value: completed.length, color: 'text-ink' },
+          { label: 'Total solicitudes', value: requests.length, color: 'text-ink' },
         ].map(s => (
           <div key={s.label} className="card p-4 text-center">
-            <p className={`text-2xl font-extrabold ${s.color}`}>{s.value}</p>
-            <p className="text-xs text-gray-500 mt-0.5">{s.label}</p>
+            <p className={`font-display text-4xl font-bold ${s.color}`}>{s.value}</p>
+            <p className="text-xs text-ink/70 mt-0.5">{s.label}</p>
           </div>
         ))}
       </div>
@@ -73,13 +73,13 @@ export default function DashboardPage() {
       {/* Accesos rápidos */}
       <div className="grid sm:grid-cols-2 gap-3 mb-8">
         {quickLinks.map(l => (
-          <Link key={l.href} href={l.href} className="card p-4 flex items-center gap-3 hover:shadow-md transition-all hover:-translate-y-0.5">
-            <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${l.color}`}>{l.icon}</div>
+          <Link key={l.href} href={l.href} className="card p-4 flex items-center gap-3 transition-[transform,box-shadow] duration-100 hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none motion-reduce:transition-none">
+            <div className={`w-11 h-11 border-2 border-ink flex items-center justify-center flex-shrink-0 ${l.color}`}>{l.icon}</div>
             <div className="flex-1 min-w-0">
-              <p className="font-semibold text-gray-800 text-sm">{l.label}</p>
-              <p className="text-xs text-gray-400">{l.desc}</p>
+              <p className="font-semibold text-ink text-sm">{l.label}</p>
+              <p className="text-xs text-ink/60">{l.desc}</p>
             </div>
-            <ChevronRight size={16} className="text-gray-300 flex-shrink-0" />
+            <ChevronRight size={16} className="text-ink/60 flex-shrink-0" />
           </Link>
         ))}
       </div>
@@ -88,18 +88,18 @@ export default function DashboardPage() {
       {loading ? <div className="flex justify-center py-8"><Spinner /></div> : requests.length > 0 && (
         <div>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="font-bold text-gray-900">Solicitudes recientes</h2>
-            <Link href="/dashboard/requests" className="text-sm text-blue-600 font-medium hover:underline">Ver todas</Link>
+            <h2 className="font-bold text-ink">Solicitudes recientes</h2>
+            <Link href="/dashboard/requests" className="text-sm text-blue-700 font-bold underline underline-offset-4">Ver todas</Link>
           </div>
           <div className="space-y-3">
             {requests.slice(0, 3).map(r => {
-              const st = statusLabel[r.status] ?? { label: r.status, color: 'bg-gray-100 text-gray-700' };
+              const st = statusLabel[r.status] ?? { label: r.status, color: 'bg-ink/10 text-ink' };
               return (
                 <Link key={r.id} href={`/dashboard/requests`}>
                   <div className="card p-4 flex items-center gap-3 hover:shadow-md transition-all">
                     <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-gray-800 text-sm truncate">{r.title}</p>
-                      <p className="text-xs text-gray-400 mt-0.5">{formatDate(r.createdAt)} · {r.category?.name}</p>
+                      <p className="font-semibold text-ink text-sm truncate">{r.title}</p>
+                      <p className="text-xs text-ink/60 mt-0.5">{formatDate(r.createdAt)} · {r.category?.name}</p>
                     </div>
                     <span className={`badge whitespace-nowrap ${st.color}`}>{st.label}</span>
                   </div>

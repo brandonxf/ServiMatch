@@ -27,12 +27,12 @@ export default function ChatLayout({ children }: { children: React.ReactNode }) 
   }, [router]);
 
   return (
-    <div className="flex h-[calc(100vh-4rem)] w-full bg-white overflow-hidden max-w-7xl mx-auto border-x border-gray-100 shadow-sm">
+    <div className="flex h-[calc(100dvh-4rem)] w-full bg-white overflow-hidden max-w-7xl mx-auto border-x border-ink shadow-sm">
       {/* Sidebar - Lista de chats */}
-      <div className={`w-full md:w-[350px] lg:w-[400px] border-r border-gray-200 flex flex-col bg-gray-50 flex-shrink-0 transition-transform ${!isRoot ? 'hidden md:flex' : 'flex'}`}>
-        <div className="p-4 border-b border-gray-200 bg-white">
-          <h1 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-            <MessageSquare size={20} className="text-blue-600" /> Mensajes
+      <div className={`w-full md:w-[350px] lg:w-[400px] border-r border-ink flex flex-col bg-paper flex-shrink-0 transition-transform ${!isRoot ? 'hidden md:flex' : 'flex'}`}>
+        <div className="p-4 border-b border-ink bg-white">
+          <h1 className="font-display text-xl font-bold uppercase tracking-tight text-ink flex items-center gap-2">
+            <MessageSquare size={20} aria-hidden="true" /> Mensajes
           </h1>
         </div>
         
@@ -40,23 +40,23 @@ export default function ChatLayout({ children }: { children: React.ReactNode }) 
           {loading ? (
             <div className="flex justify-center py-10"><Spinner size={24} /></div>
           ) : convs.length === 0 ? (
-            <div className="text-center py-10 text-gray-500 text-sm">No tienes conversaciones aún.</div>
+            <div className="text-center py-10 text-ink/70 text-sm">No tienes conversaciones aún.</div>
           ) : (
             convs.map(c => {
               const st = statusLabel[c.status];
               const isActive = pathname === `/chat/${c.requestId}`;
               return (
-                <Link key={c.requestId} href={`/chat/${c.requestId}`} className="block">
-                  <div className={`p-3 rounded-xl flex items-center gap-3 transition-all cursor-pointer ${isActive ? 'bg-blue-50 border border-blue-100' : 'hover:bg-white border border-transparent'}`}>
+                <Link key={c.requestId} href={`/chat/${c.requestId}`} aria-current={isActive ? 'page' : undefined} className="block focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-blue-600">
+                  <div className={`p-3 rounded-xl flex items-center gap-3 transition-all cursor-pointer ${isActive ? 'bg-signal border border-ink shadow-brutal-sm' : 'hover:bg-white border border-transparent hover:border-ink'}`}>
                     <Avatar src={c.otherUser.avatarUrl} name={c.otherUser.fullName} size={44} />
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between gap-2">
-                        <p className={`font-semibold text-sm truncate ${isActive ? 'text-blue-900' : 'text-gray-900'}`}>{c.otherUser.fullName}</p>
-                        <p className="text-[10px] text-gray-400 flex-shrink-0">{timeAgo(c.updatedAt)}</p>
+                        <p className={`font-semibold text-sm truncate ${'text-ink'}`}>{c.otherUser.fullName}</p>
+                        <p className="text-[10px] text-ink/60 flex-shrink-0">{timeAgo(c.updatedAt)}</p>
                       </div>
-                      <p className="text-xs text-gray-500 truncate mt-0.5">{c.title}</p>
+                      <p className="text-xs text-ink/70 truncate mt-0.5">{c.title}</p>
                       {c.lastMessage && (
-                        <p className={`text-xs truncate mt-0.5 ${isActive ? 'text-blue-700/70' : 'text-gray-400'}`}>{c.lastMessage.content}</p>
+                        <p className={`text-xs truncate mt-0.5 ${isActive ? 'text-ink/80' : 'text-ink/60'}`}>{c.lastMessage.content}</p>
                       )}
                     </div>
                   </div>

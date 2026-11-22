@@ -69,12 +69,12 @@ export default function RequestsPage() {
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
       <div className="flex items-center gap-3 mb-6">
-        <div className="w-10 h-10 bg-purple-100 text-purple-600 rounded-xl flex items-center justify-center">
+        <div className="w-10 h-10 bg-purple-300 text-ink rounded-xl flex items-center justify-center">
           <Briefcase size={20} />
         </div>
         <div>
-          <h1 className="text-2xl font-extrabold text-gray-900">Mis solicitudes</h1>
-          <p className="text-sm text-gray-500">
+          <h1 className="font-display text-3xl font-bold uppercase tracking-tight text-ink">Mis solicitudes</h1>
+          <p className="text-sm text-ink/70">
             {isWorker ? 'Solicitudes recibidas de clientes' : 'Servicios que has solicitado'}
           </p>
         </div>
@@ -88,8 +88,8 @@ export default function RequestsPage() {
             onClick={() => setTab(t.value)}
             className={`px-4 py-2 rounded-xl text-sm font-semibold whitespace-nowrap transition-all ${
               tab === t.value
-                ? 'bg-blue-600 text-white shadow-sm'
-                : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'
+                ? 'bg-ink text-signal shadow-brutal-sm'
+                : 'bg-white text-ink/70 hover:bg-paper border border-ink'
             }`}
           >
             {t.label}

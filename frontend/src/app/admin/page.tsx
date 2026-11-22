@@ -37,17 +37,17 @@ interface Stats {
 
 function GrowthBadge({ value }: { value: number }) {
   if (value > 0) return (
-    <span className="inline-flex items-center gap-1 text-xs font-semibold text-green-700 bg-green-100 px-2 py-0.5 rounded-full">
+    <span className="inline-flex items-center gap-1 text-xs font-semibold text-ink bg-green-300 px-2 py-0.5 ">
       <ArrowUpRight size={11} /> +{value}%
     </span>
   );
   if (value < 0) return (
-    <span className="inline-flex items-center gap-1 text-xs font-semibold text-red-700 bg-red-100 px-2 py-0.5 rounded-full">
+    <span className="inline-flex items-center gap-1 text-xs font-semibold text-red-700 bg-red-100 px-2 py-0.5 ">
       <ArrowDownRight size={11} /> {value}%
     </span>
   );
   return (
-    <span className="inline-flex items-center gap-1 text-xs font-semibold text-gray-600 bg-gray-100 px-2 py-0.5 rounded-full">
+    <span className="inline-flex items-center gap-1 text-xs font-semibold text-ink/70 bg-ink/10 px-2 py-0.5 ">
       <Minus size={11} /> 0%
     </span>
   );
@@ -84,18 +84,18 @@ export default function AdminPage() {
     <div className="flex items-center justify-center min-h-screen">
       <div className="text-center">
         <Spinner size={36} className="mx-auto mb-3" />
-        <p className="text-gray-500 text-sm">Cargando dashboard...</p>
+        <p className="text-ink/70 text-sm">Cargando dashboard...</p>
       </div>
     </div>
   );
 
   if (error) return (
     <div className="max-w-lg mx-auto px-4 py-20 text-center">
-      <div className="w-14 h-14 bg-red-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
-        <XCircle size={28} className="text-red-500" />
+      <div className="w-14 h-14 bg-red-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+        <XCircle size={28} className="text-red-700" />
       </div>
-      <h2 className="font-bold text-gray-900 text-lg mb-2">Error al cargar el dashboard</h2>
-      <p className="text-gray-500 text-sm mb-4">{error}</p>
+      <h2 className="font-bold text-ink text-lg mb-2">Error al cargar el dashboard</h2>
+      <p className="text-ink/70 text-sm mb-4">{error}</p>
       <button onClick={() => window.location.reload()} className="btn-primary inline-flex px-6 py-2.5">
         Reintentar
       </button>
@@ -113,7 +113,7 @@ export default function AdminPage() {
       sub: `${stats.newUsersThisMonth} nuevos este mes`,
       growth: stats.usersGrowth,
       icon: <Users size={20} />,
-      color: 'bg-blue-100 text-blue-600',
+      color: 'bg-signal/40 text-blue-700',
     },
     {
       label: 'Trabajadores activos',
@@ -121,7 +121,7 @@ export default function AdminPage() {
       sub: 'perfiles activos',
       growth: null,
       icon: <ShieldCheck size={20} />,
-      color: 'bg-green-100 text-green-600',
+      color: 'bg-green-300 text-ink',
     },
     {
       label: 'Solicitudes totales',
@@ -129,7 +129,7 @@ export default function AdminPage() {
       sub: `${stats.requestsThisMonth} este mes`,
       growth: stats.requestsGrowth,
       icon: <Briefcase size={20} />,
-      color: 'bg-purple-100 text-purple-600',
+      color: 'bg-purple-300 text-ink',
     },
     {
       label: 'Ingresos (comisiones)',
@@ -137,7 +137,7 @@ export default function AdminPage() {
       sub: `Volumen: ${formatPrice(stats.totalVolume)}`,
       growth: null,
       icon: <TrendingUp size={20} />,
-      color: 'bg-orange-100 text-orange-600',
+      color: 'bg-orange-300 text-ink',
     },
   ];
 
@@ -146,8 +146,8 @@ export default function AdminPage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-8 flex-wrap gap-3">
         <div>
-          <p className="text-sm text-gray-500 font-medium mb-1">Panel de administración</p>
-          <h1 className="text-2xl font-extrabold text-gray-900">Dashboard</h1>
+          <p className="text-sm text-ink/70 font-medium mb-1">Panel de administración</p>
+          <h1 className="font-display text-3xl font-bold uppercase tracking-tight text-ink">Dashboard</h1>
         </div>
         <div className="flex gap-2">
           <Link href="/admin/users" className="btn-secondary text-sm py-2 px-4">
@@ -175,9 +175,9 @@ export default function AdminPage() {
               </div>
               {k.growth !== null && <GrowthBadge value={k.growth} />}
             </div>
-            <p className="text-2xl font-extrabold text-gray-900 leading-none">{k.value}</p>
-            <p className="text-xs text-gray-500 mt-1.5">{k.sub}</p>
-            <p className="text-xs text-gray-400 font-medium mt-0.5">{k.label}</p>
+            <p className="text-2xl font-bold text-ink leading-none">{k.value}</p>
+            <p className="text-xs text-ink/70 mt-1.5">{k.sub}</p>
+            <p className="text-xs text-ink/60 font-medium mt-0.5">{k.label}</p>
           </div>
         ))}
       </div>
@@ -187,8 +187,8 @@ export default function AdminPage() {
 
         {/* Estado de solicitudes */}
         <div className="card p-5">
-          <h2 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
-            <Briefcase size={16} className="text-purple-600" /> Solicitudes por estado
+          <h2 className="font-bold text-ink mb-4 flex items-center gap-2">
+            <Briefcase size={16} className="text-ink" /> Solicitudes por estado
           </h2>
           <div className="space-y-3">
             {stats.requestsByStatus
@@ -200,17 +200,17 @@ export default function AdminPage() {
                   <div key={r.status}>
                     <div className="flex items-center justify-between mb-1.5">
                       <div className="flex items-center gap-2">
-                        <div className={`w-2.5 h-2.5 rounded-full ${STATUS_COLORS[r.status] ?? 'bg-gray-300'}`} />
-                        <span className="text-sm text-gray-700 font-medium">{st?.label ?? r.status}</span>
+                        <div className={`w-2.5 h-2.5  ${STATUS_COLORS[r.status] ?? 'bg-gray-300'}`} />
+                        <span className="text-sm text-ink font-medium">{st?.label ?? r.status}</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className="text-sm font-bold text-gray-900">{r.count}</span>
-                        <span className="text-xs text-gray-400 w-8 text-right">{pct}%</span>
+                        <span className="text-sm font-bold text-ink">{r.count}</span>
+                        <span className="text-xs text-ink/60 w-8 text-right">{pct}%</span>
                       </div>
                     </div>
-                    <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                    <div className="h-1.5 bg-ink/10  overflow-hidden">
                       <div
-                        className={`h-full rounded-full transition-all duration-700 ${STATUS_COLORS[r.status] ?? 'bg-gray-300'}`}
+                        className={`h-full  transition-all duration-700 ${STATUS_COLORS[r.status] ?? 'bg-gray-300'}`}
                         style={{ width: `${pct}%` }}
                       />
                     </div>
@@ -220,16 +220,16 @@ export default function AdminPage() {
           </div>
 
           {/* Mini stats */}
-          <div className="grid grid-cols-3 gap-3 mt-5 pt-4 border-t border-gray-100">
+          <div className="grid grid-cols-3 gap-3 mt-5 pt-4 border-t border-ink">
             {[
-              { label: 'Pendientes', value: stats.pendingRequests, icon: <Clock size={14} className="text-yellow-500" /> },
-              { label: 'En curso', value: stats.activeRequests, icon: <AlertCircle size={14} className="text-blue-500" /> },
+              { label: 'Pendientes', value: stats.pendingRequests, icon: <Clock size={14} className="text-ink" /> },
+              { label: 'En curso', value: stats.activeRequests, icon: <AlertCircle size={14} className="text-blue-700" /> },
               { label: 'Completadas', value: stats.completedRequests, icon: <CheckCircle size={14} className="text-green-500" /> },
             ].map(s => (
               <div key={s.label} className="text-center">
                 <div className="flex justify-center mb-1">{s.icon}</div>
-                <p className="text-lg font-extrabold text-gray-900">{s.value}</p>
-                <p className="text-xs text-gray-400">{s.label}</p>
+                <p className="text-lg font-bold text-ink">{s.value}</p>
+                <p className="text-xs text-ink/60">{s.label}</p>
               </div>
             ))}
           </div>
@@ -237,11 +237,11 @@ export default function AdminPage() {
 
         {/* Top categorías */}
         <div className="card p-5">
-          <h2 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
-            <TrendingUp size={16} className="text-orange-600" /> Categorías más solicitadas
+          <h2 className="font-bold text-ink mb-4 flex items-center gap-2">
+            <TrendingUp size={16} className="text-ink" /> Categorías más solicitadas
           </h2>
           {stats.topCategories.length === 0 ? (
-            <p className="text-gray-400 text-sm text-center py-6">Sin datos aún</p>
+            <p className="text-ink/60 text-sm text-center py-6">Sin datos aún</p>
           ) : (
             <div className="space-y-3">
               {stats.topCategories.map((c, i) => {
@@ -250,14 +250,14 @@ export default function AdminPage() {
                 const colors = ['bg-blue-500', 'bg-purple-500', 'bg-orange-500', 'bg-green-500', 'bg-pink-500'];
                 return (
                   <div key={c.name} className="flex items-center gap-3">
-                    <span className="w-5 text-xs font-bold text-gray-400 text-center">#{i + 1}</span>
+                    <span className="w-5 text-xs font-bold text-ink/60 text-center">#{i + 1}</span>
                     <div className="flex-1">
                       <div className="flex justify-between mb-1">
-                        <span className="text-sm font-semibold text-gray-800">{c.name}</span>
-                        <span className="text-sm font-bold text-gray-600">{c.count}</span>
+                        <span className="text-sm font-semibold text-ink">{c.name}</span>
+                        <span className="text-sm font-bold text-ink/70">{c.count}</span>
                       </div>
-                      <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                        <div className={`h-full rounded-full ${colors[i % colors.length]}`} style={{ width: `${pct}%` }} />
+                      <div className="h-2 bg-ink/10  overflow-hidden">
+                        <div className={`h-full  ${colors[i % colors.length]}`} style={{ width: `${pct}%` }} />
                       </div>
                     </div>
                   </div>
@@ -267,24 +267,24 @@ export default function AdminPage() {
           )}
 
           {/* Top workers */}
-          <div className="mt-5 pt-4 border-t border-gray-100">
-            <h3 className="text-sm font-bold text-gray-700 mb-3 flex items-center gap-1.5">
-              <Star size={14} className="text-yellow-400 fill-yellow-400" /> Top trabajadores
+          <div className="mt-5 pt-4 border-t border-ink">
+            <h3 className="text-sm font-bold text-ink mb-3 flex items-center gap-1.5">
+              <Star size={14} className="text-ink fill-signal text-ink" /> Top trabajadores
             </h3>
             {stats.topWorkers.length === 0 ? (
-              <p className="text-gray-400 text-xs">Sin datos aún</p>
+              <p className="text-ink/60 text-xs">Sin datos aún</p>
             ) : (
               <div className="space-y-2">
                 {stats.topWorkers.map(w => (
                   <div key={w.id} className="flex items-center gap-2.5">
                     <Avatar src={w.avatarUrl} name={w.fullName} size={32} />
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold text-gray-800 truncate">{w.fullName}</p>
-                      <p className="text-xs text-gray-400">{w.service} · {w.jobsCompleted} trabajos</p>
+                      <p className="text-sm font-semibold text-ink truncate">{w.fullName}</p>
+                      <p className="text-xs text-ink/60">{w.service} · {w.jobsCompleted} trabajos</p>
                     </div>
                     <div className="flex items-center gap-1 flex-shrink-0">
-                      <Star size={11} className="text-yellow-400 fill-yellow-400" />
-                      <span className="text-xs font-bold text-gray-700">{w.averageRating.toFixed(1)}</span>
+                      <Star size={11} className="text-ink fill-signal text-ink" />
+                      <span className="text-xs font-bold text-ink">{w.averageRating.toFixed(1)}</span>
                     </div>
                   </div>
                 ))}
@@ -299,21 +299,21 @@ export default function AdminPage() {
 
         {/* Solicitudes recientes */}
         <div className="card overflow-hidden">
-          <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
-            <h2 className="font-bold text-gray-900 text-sm">Solicitudes recientes</h2>
-            <Link href="/dashboard/requests" className="text-xs text-blue-600 font-semibold hover:underline">Ver todas</Link>
+          <div className="px-5 py-4 border-b border-ink flex items-center justify-between">
+            <h2 className="font-bold text-ink text-sm">Solicitudes recientes</h2>
+            <Link href="/dashboard/requests" className="text-xs text-blue-700 font-semibold hover:underline">Ver todas</Link>
           </div>
-          <div className="divide-y divide-gray-50">
+          <div className="divide-y divide-ink">
             {stats.recentRequests.length === 0 ? (
-              <p className="text-gray-400 text-sm text-center py-8">Sin solicitudes aún</p>
+              <p className="text-ink/60 text-sm text-center py-8">Sin solicitudes aún</p>
             ) : stats.recentRequests.map((r: any) => {
-              const st = statusLabel[r.status] ?? { label: r.status, color: 'bg-gray-100 text-gray-700' };
+              const st = statusLabel[r.status] ?? { label: r.status, color: 'bg-ink/10 text-ink' };
               return (
-                <div key={r.id} className="px-5 py-3 flex items-center gap-3 hover:bg-gray-50 transition-colors">
+                <div key={r.id} className="px-5 py-3 flex items-center gap-3 hover:bg-paper transition-colors">
                   <Avatar src={r.client?.avatarUrl} name={r.client?.fullName ?? '?'} size={32} />
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-gray-800 truncate">{r.title}</p>
-                    <p className="text-xs text-gray-400">
+                    <p className="text-sm font-semibold text-ink truncate">{r.title}</p>
+                    <p className="text-xs text-ink/60">
                       {r.client?.fullName} → {r.worker?.user?.fullName} · {timeAgo(r.createdAt)}
                     </p>
                   </div>
@@ -326,19 +326,19 @@ export default function AdminPage() {
 
         {/* Usuarios recientes */}
         <div className="card overflow-hidden">
-          <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
-            <h2 className="font-bold text-gray-900 text-sm">Usuarios recientes</h2>
+          <div className="px-5 py-4 border-b border-ink flex items-center justify-between">
+            <h2 className="font-bold text-ink text-sm">Usuarios recientes</h2>
             <span className="badge badge-blue">{stats.newUsersThisMonth} este mes</span>
           </div>
-          <div className="divide-y divide-gray-50">
+          <div className="divide-y divide-ink">
             {stats.recentUsers.length === 0 ? (
-              <p className="text-gray-400 text-sm text-center py-8">Sin usuarios aún</p>
+              <p className="text-ink/60 text-sm text-center py-8">Sin usuarios aún</p>
             ) : stats.recentUsers.map((u: any) => (
-              <div key={u.id} className="px-5 py-3 flex items-center gap-3 hover:bg-gray-50 transition-colors">
+              <div key={u.id} className="px-5 py-3 flex items-center gap-3 hover:bg-paper transition-colors">
                 <Avatar src={u.avatarUrl} name={u.fullName} size={32} />
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-gray-800">{u.fullName}</p>
-                  <p className="text-xs text-gray-400 truncate">{u.email} · {timeAgo(u.createdAt)}</p>
+                  <p className="text-sm font-semibold text-ink">{u.fullName}</p>
+                  <p className="text-xs text-ink/60 truncate">{u.email} · {timeAgo(u.createdAt)}</p>
                 </div>
                 <div className="flex items-center gap-1.5 flex-shrink-0">
                   <Badge variant={u.role === 'WORKER' ? 'green' : u.role === 'ADMIN' ? 'purple' : 'blue'}>
