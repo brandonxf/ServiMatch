@@ -23,14 +23,17 @@ export default function WorkerProfilePage() {
   const [categories, setCategories] = useState<ServiceCategory[]>([]);
   const [showRequestForm, setShowRequestForm] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [form, setForm] = useState({ title: '', description: '', categoryId: '', address: '', budget: '' });
+  const [form, setForm] = useState({ title: '', description: '', categoryId: '', address: '', budget: '', scheduledAt: '' });
+  const [busy, setBusy] = useState<{ slotMinutes: number; data: string[] }>({ slotMinutes: 120, data: [] });
 
   useEffect(() => {
     Promise.all([
       workersApi.getById(id),
       workersApi.getReviews(id),
       workersApi.getCategories(),
-    ]).then(([w, r, c]) => {
+      requestsApi.getBusySlots(id).catch(() => ({ data: { slotMinutes: 120, data: [] } })),
+    ]).then(([w, r, c, b]) => {
+      setBusy(b.data);
       setWorker(w.data);
       setReviews((r.data as any).data ?? []);
       setCategories((c.data as any) ?? []);
@@ -40,6 +43,14 @@ export default function WorkerProfilePage() {
   const handleRequest = async () => {
     if (!user) { router.push('/auth/login'); return; }
     if (!form.title || !form.categoryId) { toast.error('Completa el título y el tipo de servicio'); return; }
+    if (form.scheduledAt) {
+      const when = new Date(form.scheduledAt).getTime();
+      if (when < Date.now() + 30 * 60_000) { toast.error('Elige una fecha futura (mínimo 30 min de anticipación)'); return; }
+      const ms = busy.slotMinutes * 60_000;
+      if (busy.data.some(d => Math.abs(new Date(d).getTime() - when) < ms)) {
+        toast.error('El trabajador ya tiene una cita en ese horario'); return;
+      }
+    }
     try {
       await requestsApi.create({
         workerId: id,
@@ -48,6 +59,7 @@ export default function WorkerProfilePage() {
         description: form.description,
         address: form.address,
         budget: form.budget ? Number(form.budget) : undefined,
+        scheduledAt: form.scheduledAt ? new Date(form.scheduledAt).toISOString() : undefined,
       });
       toast.success('¡Solicitud enviada! El trabajador te responderá pronto.');
       setShowRequestForm(false);
@@ -216,6 +228,22 @@ export default function WorkerProfilePage() {
               <div>
                 <label className="label">Dirección</label>
                 <input value={form.address} onChange={e => setForm(f => ({ ...f, address: e.target.value }))} placeholder="Dirección del trabajo" className="input" />
+              </div>
+              <div>
+                <label className="label">Fecha y hora</label>
+                <input value={form.scheduledAt} onChange={e => setForm(f => ({ ...f, scheduledAt: e.target.value }))}
+                  type="datetime-local" min={new Date(Date.now() - new Date().getTimezoneOffset() * 60000 + 30 * 60000).toISOString().slice(0, 16)}
+                  className="input" />
+                {busy.data.length > 0 && (
+                  <div className="mt-2 text-xs text-ink/70">
+                    <p className="font-semibold">Horarios ocupados (cada cita dura ~{busy.slotMinutes / 60} h):</p>
+                    <ul className="mt-1 space-y-0.5 max-h-20 overflow-auto">
+                      {busy.data.map(d => (
+                        <li key={d}>• {new Date(d).toLocaleString('es-CO', { dateStyle: 'medium', timeStyle: 'short' })}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </div>
               <div>
                 <label className="label">Presupuesto (COP)</label>

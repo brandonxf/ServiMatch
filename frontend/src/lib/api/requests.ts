@@ -11,6 +11,9 @@ export const requestsApi = {
   getAll: (status?: string) =>
     api.get<{ data: Request[] }>('/requests', { params: { status } }),
 
+  getBusySlots: (workerId: string) =>
+    api.get<{ slotMinutes: number; data: string[] }>(`/requests/worker/${workerId}/busy`),
+
   getById: (id: string) => api.get<Request>(`/requests/${id}`),
 
   accept: (id: string) => api.patch(`/requests/${id}/accept`),

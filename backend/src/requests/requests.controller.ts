@@ -28,6 +28,12 @@ export class RequestsController {
     return this.requests.findAll(user.id, user.role, status);
   }
 
+  @Get('worker/:workerId/busy')
+  @ApiOperation({ summary: 'Horarios ocupados de un trabajador' })
+  busy(@Param('workerId') workerId: string) {
+    return this.requests.getBusySlots(workerId);
+  }
+
   @Get(':id')
   @ApiOperation({ summary: 'Detalle de solicitud' })
   findOne(@Param('id') id: string, @CurrentUser() user: any) {
