@@ -26,6 +26,8 @@ export class RequestsService {
   async create(clientId: string, dto: CreateRequestDto) {
     const worker = await this.prisma.workerProfile.findUnique({ where: { id: dto.workerId } });
     if (!worker) throw new NotFoundException('Trabajador no encontrado');
+    if (worker.userId === clientId)
+      throw new BadRequestException('No puedes solicitarte un servicio a ti mismo');
     if (!worker.isAvailable || worker.status !== 'ACTIVE')
       throw new BadRequestException('El trabajador no está disponible');
 

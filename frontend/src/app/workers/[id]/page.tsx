@@ -115,10 +115,14 @@ export default function WorkerProfilePage() {
             )}
 
             <div className="mt-4 space-y-2">
-              <button onClick={() => { if (!user) { router.push('/auth/login'); return; } setShowRequestForm(true); }}
-                className="btn-primary w-full">
-                <Calendar size={16} /> Solicitar servicio
-              </button>
+              {user?.id === worker.user?.id ? (
+                <p className="text-xs text-ink/60 text-center">Este es tu perfil</p>
+              ) : (
+                <button onClick={() => { if (!user) { router.push('/auth/login'); return; } setShowRequestForm(true); }}
+                  className="btn-primary w-full">
+                  <Calendar size={16} /> Solicitar servicio
+                </button>
+              )}
               {worker.user?.phone && (
                 <a href={`https://wa.me/${worker.user.phone.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer"
                   className="btn-secondary w-full text-ink border-ink hover:bg-green-300">
