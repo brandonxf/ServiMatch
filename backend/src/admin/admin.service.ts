@@ -167,7 +167,7 @@ export class AdminService {
 
   async getUsers(page = 1, limit = 20, role?: string) {
     const skip = (page - 1) * limit;
-    const where: any = { isActive: true };
+    const where: any = {};
     if (role) where.role = role;
 
     const [users, total] = await Promise.all([
